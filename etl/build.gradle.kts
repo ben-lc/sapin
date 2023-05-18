@@ -20,6 +20,7 @@ dependencies {
 }
 
 tasks.register("loadDatabase") {
+  val includes = project.properties["includes"] ?: "*.etl.xml"
   ant.setProperty("csv.location", "../input")
   ant.setProperty("db.url", "jdbc:postgresql://localhost/db_sapin")
   ant.setProperty("db.user", "postgres")
@@ -30,7 +31,7 @@ tasks.register("loadDatabase") {
           "resource" to "antscriptella.properties",
           "classpath" to configurations["scriptella"].asPath)
       "etl"("nostat" to true, "nojmx" to true) {
-        "fileset"("dir" to "src/main/resources/etl", "includes" to "*.etl.xml")
+        "fileset"("dir" to "src/main/resources/etl", "includes" to includes)
       }
     }
   }
