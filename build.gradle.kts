@@ -1,24 +1,16 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
   id("org.springframework.boot") version "3.0.6"
-  id("io.spring.dependency-management") version "1.1.0"
   id("org.graalvm.buildtools.native") version "0.9.20"
-  id("com.diffplug.spotless") version "6.18.0"
-  id("com.github.ben-manes.versions") version "0.46.0"
-  kotlin("jvm") version "1.7.22"
-  kotlin("plugin.spring") version "1.7.22"
+  id("sacoche.common-conventions")
+  id("sacoche.kotlin-conventions")
+  id("sacoche.sql-conventions")
 }
 
 group = "fr.sacoche"
 
 version = "0.0.1-SNAPSHOT"
 
-java.sourceCompatibility = JavaVersion.VERSION_17
-
 configurations { compileOnly { extendsFrom(configurations.annotationProcessor.get()) } }
-
-repositories { mavenCentral() }
 
 extra["testcontainersVersion"] = "1.18.0"
 
@@ -48,18 +40,4 @@ dependencies {
 
 dependencyManagement {
   imports { mavenBom("org.testcontainers:testcontainers-bom:${property("testcontainersVersion")}") }
-}
-
-tasks.withType<KotlinCompile> {
-  kotlinOptions {
-    freeCompilerArgs = listOf("-Xjsr305=strict")
-    jvmTarget = "17"
-  }
-}
-
-tasks.withType<Test> { useJUnitPlatform() }
-
-spotless {
-  kotlin { ktfmt() }
-  kotlinGradle { ktfmt() }
 }
