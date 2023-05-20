@@ -1,3 +1,5 @@
+package com.github.ben_lc.sapin
+
 import org.springframework.boot.test.util.TestPropertyValues
 import org.springframework.context.ApplicationContextInitializer
 import org.springframework.context.ConfigurableApplicationContext

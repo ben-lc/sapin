@@ -1,4 +1,4 @@
-package fr.sacoche.sapin
+package com.github.ben_lc.sapin
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication

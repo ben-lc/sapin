@@ -1,9 +1,9 @@
 plugins {
   id("org.springframework.boot") version "3.0.6"
   id("org.graalvm.buildtools.native") version "0.9.20"
-  id("sacoche.common-conventions")
-  id("sacoche.kotlin-conventions")
-  id("sacoche.sql-conventions")
+  id("sapin.common-conventions")
+  id("sapin.kotlin-conventions")
+  id("sapin.sql-conventions")
 }
 
 group = "fr.sacoche"

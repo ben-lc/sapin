@@ -1,8 +1,8 @@
 plugins {
   id("org.flywaydb.flyway") version "9.17.0"
-  id("sacoche.common-conventions")
-  id("sacoche.sql-conventions")
-  id("sacoche.kotlin-conventions")
+  id("sapin.common-conventions")
+  id("sapin.sql-conventions")
+  id("sapin.kotlin-conventions")
 }
 
 repositories {

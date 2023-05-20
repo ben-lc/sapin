@@ -1,6 +1,5 @@
-package fr.sacoche.sapin
+package com.github.ben_lc.sapin
 
-import DatabaseContextInitializer
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ContextConfiguration
