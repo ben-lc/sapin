@@ -3,10 +3,6 @@ plugins {
   id("com.github.ben-manes.versions")
 }
 
-repositories {
-  mavenCentral()
-}
-
 spotless {
   kotlinGradle { ktfmt() }
 }

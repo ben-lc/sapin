@@ -14,6 +14,8 @@ configurations { compileOnly { extendsFrom(configurations.annotationProcessor.ge
 
 extra["testcontainersVersion"] = "1.18.0"
 
+repositories { mavenCentral() }
+
 dependencies {
   implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
   implementation("org.springframework.boot:spring-boot-starter-graphql")

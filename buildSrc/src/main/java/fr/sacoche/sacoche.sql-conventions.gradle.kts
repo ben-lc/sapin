@@ -2,10 +2,7 @@ plugins {
   id("com.diffplug.spotless")
 }
 
-repositories {
-  mavenCentral()
-}
-
+spotless {
 spotless {
   sql {
     target("src/main/resources/**/*.sql")

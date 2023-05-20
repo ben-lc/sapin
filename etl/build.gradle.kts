@@ -2,6 +2,12 @@ plugins {
   id("org.flywaydb.flyway") version "9.17.0"
   id("sacoche.common-conventions")
   id("sacoche.sql-conventions")
+  id("sacoche.kotlin-conventions")
+}
+
+repositories {
+  maven { url = uri("https://repo.osgeo.org/repository/release") }
+  mavenCentral()
 }
 
 extra["scriptellaVersion"] = "1.2"
@@ -10,6 +16,8 @@ extra["postgresDriverVersion"] = "42.5.0"
 
 extra["scriptellaVersion"] = "1.2"
 
+extra["geotoolsVersion"] = "28.2"
+
 val scriptella by configurations.creating
 
 dependencies {
@@ -17,6 +25,9 @@ dependencies {
   scriptella("org.scriptella:scriptella-tools:${property("scriptellaVersion")}")
   scriptella("org.scriptella:scriptella-drivers:${property("scriptellaVersion")}")
   scriptella("org.postgresql:postgresql:${property("postgresDriverVersion")}")
+  implementation("org.geotools.jdbc:gt-jdbc-postgis:${property("geotoolsVersion")}")
+  // implementation("org.geotools:gt-epsg-hsql:${property("geotoolsVersion")}")
+  implementation("org.geotools:gt-geopkg:${property("geotoolsVersion")}")
 }
 
 tasks.register("loadDatabase") {
