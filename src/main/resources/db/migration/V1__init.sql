@@ -1,3 +1,4 @@
+-- postgres extentions to load
 CREATE EXTENSION IF NOT EXISTS postgis
 WITH
   SCHEMA public;
@@ -39,13 +40,13 @@ CREATE TABLE IF NOT EXISTS
     UNIQUE (accepted_name)
   );
 
-CREATE UNIQUE INDEX taxon_src_taxon_name_id_idx ON sapin.taxon (src_taxon_name_id);
+CREATE UNIQUE INDEX IF NOT EXISTS taxon_src_taxon_name_id_idx ON sapin.taxon (src_taxon_name_id);
 
-CREATE INDEX taxon_parent_taxon_id_idx ON sapin.taxon (parent_taxon_id);
+CREATE INDEX IF NOT EXISTS taxon_parent_taxon_id_idx ON sapin.taxon (parent_taxon_id);
 
-CREATE INDEX taxon_taxon_rank_idx ON sapin.taxon (taxon_rank);
+CREATE INDEX IF NOT EXISTS taxon_taxon_rank_idx ON sapin.taxon (taxon_rank);
 
-CREATE INDEX taxon_tree_path_idx ON sapin.taxon USING GIST (tree_path);
+CREATE INDEX IF NOT EXISTS taxon_tree_path_idx ON sapin.taxon USING GIST (tree_path);
 
 CREATE TABLE IF NOT EXISTS
   sapin.taxon_scientific_name (
@@ -65,13 +66,13 @@ CREATE TABLE IF NOT EXISTS
     UNIQUE (scientific_name)
   );
 
-CREATE INDEX taxon_scientific_name_taxon_id_idx ON sapin.taxon_scientific_name (taxon_id);
+CREATE INDEX IF NOT EXISTS taxon_scientific_name_taxon_id_idx ON sapin.taxon_scientific_name (taxon_id);
 
-CREATE UNIQUE INDEX taxon_scientific_name_src_taxon_name_id_idx ON sapin.taxon_scientific_name (src_taxon_name_id);
+CREATE UNIQUE INDEX IF NOT EXISTS taxon_scientific_name_src_taxon_name_id_idx ON sapin.taxon_scientific_name (src_taxon_name_id);
 
-CREATE INDEX taxon_scientific_name_taxonomic_status_idx ON sapin.taxon_scientific_name (taxonomic_status);
+CREATE INDEX IF NOT EXISTS taxon_scientific_name_taxonomic_status_idx ON sapin.taxon_scientific_name (taxonomic_status);
 
-CREATE INDEX taxon_scientific_name_trgm_idx ON sapin.taxon_scientific_name USING GIST (scientific_name gist_trgm_ops);
+CREATE INDEX IF NOT EXISTS taxon_scientific_name_trgm_idx ON sapin.taxon_scientific_name USING GIST (scientific_name gist_trgm_ops);
 
 CREATE TABLE IF NOT EXISTS
   sapin.taxon_vernacular_name (
@@ -82,4 +83,4 @@ CREATE TABLE IF NOT EXISTS
     UNIQUE (taxon_id, vernacular_name)
   );
 
-CREATE INDEX taxon_vernacular_name_trgm_idx ON sapin.taxon_vernacular_name USING GIST (vernacular_name gist_trgm_ops);
+CREATE INDEX IF NOT EXISTS taxon_vernacular_name_trgm_idx ON sapin.taxon_vernacular_name USING GIST (vernacular_name gist_trgm_ops);
