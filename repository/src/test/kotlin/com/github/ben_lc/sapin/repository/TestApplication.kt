@@ -1,10 +1,10 @@
 package com.github.ben_lc.sapin.repository
 
+import javax.sql.DataSource
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.r2dbc.R2dbcProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.jdbc.datasource.DriverManagerDataSource
-import javax.sql.DataSource
 
 @SpringBootApplication
 class TestApplication {
