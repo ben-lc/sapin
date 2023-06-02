@@ -1,0 +1,2 @@
+INSERT INTO sapin.location (level, name, iso_id, geom) VALUES ('COUNTRY', 'Italy', 'ITA', ST_GeomFromText('POLYGON ((10 30, 30 30, 30 10, 10 10, 10 30))'));
+INSERT INTO sapin.location (level, name, iso_id, geom) VALUES ('COUNTRY', 'Japan', 'JPN', null);

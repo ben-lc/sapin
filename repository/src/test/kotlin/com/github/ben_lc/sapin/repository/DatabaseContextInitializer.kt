@@ -1,4 +1,4 @@
-package com.github.ben_lc.sapin
+package com.github.ben_lc.sapin.repository
 
 import org.springframework.boot.test.util.TestPropertyValues
 import org.springframework.context.ApplicationContextInitializer
@@ -13,12 +13,14 @@ class DatabaseContextInitializer : ApplicationContextInitializer<ConfigurableApp
     TestPropertyValues.of(
             "spring.r2dbc.url=${database.jdbcUrl.replace("jdbc", "r2dbc")}",
             "spring.r2dbc.username=${database.username}",
-            "spring.r2dbc.password=${database.password}")
+            "spring.r2dbc.password=${database.password}",
+            "spring.r2dbc.name=db_sapin")
         .applyTo(context.environment)
   }
 
   private companion object {
-    val database: KPostgreSQLContainer = KPostgreSQLContainer("postgis/postgis:15-3.3-alpine")
+    val database: KPostgreSQLContainer =
+        KPostgreSQLContainer("postgis/postgis:15-3.3-alpine").withInitScript("init.sql")
   }
 
   internal class KPostgreSQLContainer(image: String) :

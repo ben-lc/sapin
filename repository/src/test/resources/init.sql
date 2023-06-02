@@ -14,7 +14,7 @@ WITH
 CREATE SCHEMA IF NOT EXISTS sapin;
 
 -- taxonomic data
-CREATE TYPE sapin.enum_taxon_rank AS ENUM(
+CREATE TYPE sapin.taxon_rank_enum AS ENUM(
   'KINGDOM',
   'PHYLUM',
   'CLASS',
@@ -27,14 +27,14 @@ CREATE TYPE sapin.enum_taxon_rank AS ENUM(
   'FORM'
 );
 
-CREATE TYPE sapin.enum_taxonomic_status AS ENUM('ACCEPTED', 'DOUBTFUL', 'SYNONYM');
+CREATE TYPE sapin.taxonomic_status_enum AS ENUM('ACCEPTED', 'DOUBTFUL', 'SYNONYM');
 
 CREATE TABLE IF NOT EXISTS
   sapin.taxon (
     taxon_id serial PRIMARY KEY,
     src_taxon_name_id text NOT NULL,
     parent_taxon_id integer REFERENCES sapin.taxon (taxon_id),
-    taxon_rank sapin.enum_taxon_rank NOT NULL,
+    taxon_rank sapin.taxon_rank_enum NOT NULL,
     accepted_name text NOT NULL,
     tree_path ltree,
     UNIQUE (accepted_name)
@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS
     taxon_name_id serial PRIMARY KEY,
     taxon_id integer REFERENCES sapin.taxon (taxon_id) NOT NULL,
     src_taxon_name_id text NOT NULL,
-    taxonomic_status sapin.enum_taxonomic_status NOT NULL,
+    taxonomic_status sapin.taxonomic_status_enum NOT NULL,
     scientific_name text NOT NULL,
     accepted_name_id integer REFERENCES sapin.taxon_scientific_name (taxon_name_id),
     original_name_id integer REFERENCES sapin.taxon_scientific_name (taxon_name_id),
