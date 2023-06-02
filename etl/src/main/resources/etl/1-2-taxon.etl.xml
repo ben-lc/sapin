@@ -41,7 +41,7 @@
       VALUES (
         ?taxonID,
       <!-- source data can have several synonym status like "proparte synonym" or "homotypic synonym", in this case we just keep second word to map them all to SYNONYM taxonomic status -->
-      upper(regexp_replace(?taxonomicStatus, '(.*) (.*)', '\2'))::sapin.enum_taxonomic_status,
+      upper(regexp_replace(?taxonomicStatus, '(.*) (.*)', '\2'))::sapin.taxonomic_status_enum,
         ?scientificName,
         ?canonicalName,
         ?scientificNameAuthorship,
@@ -52,7 +52,7 @@
         ?acceptedNameUsageID,
         ?originalNameUsageID,
         ?parentNameUsageID,
-        upper(?taxonRank)::sapin.enum_taxon_rank
+        upper(?taxonRank)::sapin.taxon_rank_enum
       )
     </script>
   </query>

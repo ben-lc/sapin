@@ -2,7 +2,7 @@
 CREATE TABLE IF NOT EXISTS
   sapin.tmp_taxon_scientific_name (
     src_taxon_name_id text PRIMARY KEY,
-    taxonomic_status sapin.enum_taxonomic_status NOT NULL,
+    taxonomic_status sapin.taxonomic_status_enum NOT NULL,
     scientific_name text NOT NULL,
     accepted_name_id integer,
     original_name_id integer,
@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS
     src_accepted_name_id text,
     src_original_name_id text,
     src_parent_name_id text,
-    taxon_rank sapin.enum_taxon_rank
+    taxon_rank sapin.taxon_rank_enum
   );
 
 CREATE INDEX tmp_taxon_scientific_name_scientific_name_idx ON sapin.tmp_taxon_scientific_name (scientific_name);

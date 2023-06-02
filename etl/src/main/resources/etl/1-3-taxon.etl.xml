@@ -56,7 +56,7 @@
       )
       VALUES (
         ?src_taxon_name_id,
-        ?taxonomic_status::sapin.enum_taxonomic_status,
+        ?taxonomic_status::sapin.taxonomic_status_enum,
         ?scientific_name,
         ?canonical_name,
         ?scientific_name_authorship,

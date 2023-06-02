@@ -40,7 +40,7 @@
       )
       VALUES (
         ?src_taxon_name_id,
-        upper(?taxon_rank)::sapin.enum_taxon_rank,
+        upper(?taxon_rank)::sapin.taxon_rank_enum,
         ?scientific_name
       )
     </script>
