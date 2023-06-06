@@ -2,6 +2,7 @@ package com.github.ben_lc.sapin.etl.service
 
 import com.github.ben_lc.sapin.model.Location
 import com.github.ben_lc.sapin.repository.LocationRepository
+import java.io.File
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
@@ -9,7 +10,6 @@ import org.geotools.data.DataStoreFinder
 import org.locationtech.jts.geom.MultiPolygon
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
-import java.io.File
 
 @Component
 class GeopackageService @Autowired constructor(val locationRepo: LocationRepository) {

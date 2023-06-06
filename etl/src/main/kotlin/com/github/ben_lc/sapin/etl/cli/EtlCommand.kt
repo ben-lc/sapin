@@ -1,56 +1,65 @@
 package com.github.ben_lc.sapin.etl.cli
 
-import com.github.ben_lc.sapin.etl.cli.EtlCommand.DataType.LOCATION
 import com.github.ben_lc.sapin.etl.service.GeopackageService
 import com.github.ben_lc.sapin.etl.service.GeopackageService.GpkgProps
+import com.github.ben_lc.sapin.etl.service.ScriptellaService
 import com.github.ben_lc.sapin.model.Location
-import kotlinx.coroutines.runBlocking
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.stereotype.Component
-import picocli.CommandLine
-import picocli.CommandLine.Command
 import java.io.File
 import java.util.concurrent.Callable
+import kotlinx.coroutines.runBlocking
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.core.io.Resource
+import org.springframework.stereotype.Component
+import picocli.CommandLine.*
 
-/**
- * Picocli commands configuration.
- */
+/** Picocli commands configuration. */
 @Component
 @Command(
     name = "etl",
     description = ["sapin ETL CLI tool used to load, transform and extract data"],
     mixinStandardHelpOptions = true)
-class EtlCommand @Autowired constructor(val geopackageService: GeopackageService) : Callable<Int> {
+class EtlCommand(
+    val geopackageService: GeopackageService,
+    val scriptellaService: ScriptellaService
+) : Callable<Int> {
 
-  @CommandLine.Spec val spec: CommandLine.Model.CommandSpec? = null
+  @Spec val spec: Model.CommandSpec? = null
 
-  enum class DataType {
-    LOCATION
-  }
+  @Value("\${scriptella.config.location}") lateinit var configLocation: Resource
 
-  @Command(name = "load", description = ["Load data into sapin"])
-  fun load(
-      @CommandLine.Parameters(
-          description = ["Type of data to load, valid values: \${COMPLETION-CANDIDATES}"],
-          paramLabel = "<data type>")
-      dataType: DataType,
-      @CommandLine.Parameters(
-          paramLabel = "<folder>", description = ["Folder containing data to load"])
-      loadFolder: File
+  @Command(
+      name = "load-location",
+      description = ["Load location data into sapin database"],
+      mixinStandardHelpOptions = true)
+  fun loadLocation(
+      @Parameters(paramLabel = "<gpkg file>", description = ["Geopackage file location to load"])
+      gpkgLocation: File
   ) {
-    when (dataType) {
-      LOCATION ->
-          runBlocking {
-            geopackageService.loadLocation(
-                loadFolder,
-                GpkgProps(
-                    tableName = "ADM_0",
-                    level = Location.Level.COUNTRY,
-                    isoIdColumn = "GID_0",
-                    nameColumn = "COUNTRY"))
-          }
+    runBlocking {
+      geopackageService.loadLocation(
+          gpkgLocation,
+          GpkgProps(
+              tableName = "ADM_0",
+              level = Location.Level.COUNTRY,
+              isoIdColumn = "GID_0",
+              nameColumn = "COUNTRY"))
     }
   }
-  override fun call(): Int =
-      throw CommandLine.ParameterException(spec?.commandLine(), "Specify a subcommand")
+  @Command(
+      name = "load-taxon",
+      description = ["Load taxon data into sapin database"],
+      mixinStandardHelpOptions = true)
+  fun loadTaxon(
+      @Parameters(paramLabel = "<data folder>", description = ["Folder containing data to load"])
+      dataLocation: File,
+      @Parameters(
+          description = ["Ant file pattern to select scriptella etl files to run e.g: 1-1*"],
+          paramLabel = "<file pattern>",
+          defaultValue = "*.etl.xml")
+      configFilePattern: String
+  ) {
+    scriptellaService.runEtl(dataLocation, File(configLocation.file, "/taxon"), configFilePattern)
+  }
+
+  override fun call(): Int = throw ParameterException(spec?.commandLine(), "Specify a subcommand")
 }

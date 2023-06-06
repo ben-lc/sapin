@@ -12,9 +12,7 @@ import org.springframework.context.annotation.Import
 import picocli.CommandLine
 import picocli.CommandLine.IFactory
 
-/**
- * Spring boot cli tool app with picocli.
- */
+/** Spring boot cli tool app with picocli. */
 @SpringBootApplication
 @Import(R2dbcConfig::class, LocationRepository::class)
 class EtlApplication
