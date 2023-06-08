@@ -1,0 +1,70 @@
+<!DOCTYPE etl SYSTEM "http://scriptella.org/dtd/etl.dtd">
+<etl>
+  <description>
+    Transfer raw data imported in tmp_taxon_scientific_name to
+    taxon_scientific_name
+  </description>
+
+  <connection
+    id="db1"
+    url="${db.url}"
+    driver="postgresql"
+    user="${db.user}"
+    password="${db.password}"
+  >
+    statement.fetchSize=100
+  </connection>
+
+  <connection
+    id="db2"
+    url="${db.url}"
+    driver="postgresql"
+    user="${db.user}"
+    password="${db.password}"
+  >
+    statement.batchSize=100
+  </connection>
+
+  <query connection-id="db1">
+    SELECT
+      src_taxon_name_id,
+      taxonomic_status,
+      scientific_name,
+      canonical_name,
+      scientific_name_authorship,
+      generic_name,
+      specific_epithet,
+      infraspecific_epithet,
+      name_published_in
+    FROM
+      sapin.tmp_taxon_scientific_name
+    ORDER BY
+      taxonomic_status, src_taxon_name_id
+    <!-- since there are taxon names duplicates with different taxonomic status in source data we sort them by
+      taxonomic status to insert ACCEPTED first and drop duplicates with ON CONFLICT DO NOTHING during INSERT -->
+    <script connection-id="db2">
+      INSERT INTO sapin.taxon_scientific_name (
+        src_taxon_name_id,
+        taxonomic_status,
+        scientific_name,
+        canonical_name,
+        scientific_name_authorship,
+        generic_name,
+        specific_epithet,
+        infraspecific_epithet,
+        name_published_in
+      )
+      VALUES (
+        ?src_taxon_name_id,
+        ?taxonomic_status::sapin.taxonomic_status_enum,
+        ?scientific_name,
+        ?canonical_name,
+        ?scientific_name_authorship,
+        ?generic_name,
+        ?specific_epithet,
+        ?infraspecific_epithet,
+        ?name_published_in
+      ) ON CONFLICT DO NOTHING
+    </script>
+  </query>
+</etl>

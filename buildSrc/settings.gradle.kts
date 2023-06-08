@@ -1,1 +1,1 @@
-rootProject.name="sacoche-conventions"
+rootProject.name="sapin-conventions"
