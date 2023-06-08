@@ -33,17 +33,29 @@ class EtlCommand(
       mixinStandardHelpOptions = true)
   fun loadLocation(
       @Parameters(paramLabel = "<gpkg file>", description = ["Geopackage file location to load"])
-      gpkgLocation: File
+      gpkg: File
   ) {
+    scriptellaService.runEtl(File(configLocation.file, "/location"), "pre-load.etl.xml")
     runBlocking {
       geopackageService.loadLocation(
-          gpkgLocation,
+          gpkg,
           GpkgProps(
               tableName = "ADM_0",
-              level = Location.Level.COUNTRY,
+              level = Location.Level.TERRITORY,
               isoIdColumn = "GID_0",
-              nameColumn = "COUNTRY"))
+              nameColumn = "COUNTRY",
+              srcId = "GID_0"),
+          GpkgProps(
+              tableName = "ADM_1",
+              level = Location.Level.TERRITORY_SUBDIV_L1,
+              isoIdColumn = "ISO_1",
+              nameColumn = "NAME_1",
+              levelLocalName = "TYPE_1",
+              levelLocalNameEn = "ENGTYPE_1",
+              srcId = "GID_1",
+              srcParentId = "GID_0"))
     }
+    scriptellaService.runEtl(File(configLocation.file, "/location"), "post-load.etl.xml")
   }
   @Command(
       name = "load-taxon",
@@ -51,14 +63,14 @@ class EtlCommand(
       mixinStandardHelpOptions = true)
   fun loadTaxon(
       @Parameters(paramLabel = "<data folder>", description = ["Folder containing data to load"])
-      dataLocation: File,
+      dataFolder: File,
       @Parameters(
           description = ["Ant file pattern to select scriptella etl files to run e.g: 1-1*"],
           paramLabel = "<file pattern>",
           defaultValue = "*.etl.xml")
       configFilePattern: String
   ) {
-    scriptellaService.runEtl(dataLocation, File(configLocation.file, "/taxon"), configFilePattern)
+    scriptellaService.runEtl(File(configLocation.file, "/taxon"), configFilePattern, dataFolder)
   }
 
   override fun call(): Int = throw ParameterException(spec?.commandLine(), "Specify a subcommand")

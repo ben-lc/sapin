@@ -7,6 +7,7 @@ import com.github.ben_lc.sapin.model.Location
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.*
 import java.io.File
+import kotlinx.coroutines.Job
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -26,33 +27,58 @@ internal class EtlApplicationTests {
 
   @Test
   fun `Command line parameters for subcommand load-taxon should be parsed and call scriptellaService#runEtl`() {
-    CommandLine(etlCommand, factory).execute("load-taxon", "/that/folder", "toto")
     every { scriptellaService.runEtl(any(), any(), any()) } just Runs
+
+    CommandLine(etlCommand, factory).execute("load-taxon", "/that/folder", "toto")
+
     verify {
-      scriptellaService.runEtl(File("/that/folder"), match { it.endsWith("etl/taxon") }, "toto")
+      scriptellaService.runEtl(match { it.endsWith("etl/taxon") }, "toto", File("/that/folder"))
     }
   }
 
   @Test
   fun `Last Command line parameter for subcommand load-taxon should be defaulted of not set and call scriptellaService#runEtl`() {
-    CommandLine(etlCommand, factory).execute("load-taxon", "/that/folder")
     every { scriptellaService.runEtl(any(), any(), any()) } just Runs
+
+    CommandLine(etlCommand, factory).execute("load-taxon", "/that/folder")
+
     verify {
       scriptellaService.runEtl(
-          File("/that/folder"), match { it.endsWith("etl/taxon") }, "*.etl.xml")
+          match { it.endsWith("etl/taxon") }, "*.etl.xml", File("/that/folder"))
     }
   }
 
   @Test
   fun `Command line parameters for subcommand load-location should be parsed and call geopackageService#loadLocation`() {
     val expectedGeopkgProps =
-        GeopackageService.GpkgProps(
-            tableName = "ADM_0",
-            level = Location.Level.COUNTRY,
-            isoIdColumn = "GID_0",
-            nameColumn = "COUNTRY")
+        arrayOf(
+            GeopackageService.GpkgProps(
+                tableName = "ADM_0",
+                level = Location.Level.TERRITORY,
+                isoIdColumn = "GID_0",
+                nameColumn = "COUNTRY",
+                srcId = "GID_0"),
+            GeopackageService.GpkgProps(
+                tableName = "ADM_1",
+                level = Location.Level.TERRITORY_SUBDIV_L1,
+                isoIdColumn = "ISO_1",
+                nameColumn = "NAME_1",
+                levelLocalName = "TYPE_1",
+                levelLocalNameEn = "ENGTYPE_1",
+                srcId = "GID_1",
+                srcParentId = "GID_0"))
+
+    every { scriptellaService.runEtl(any(), any()) } just Runs
+    coEvery { geopackageService.loadLocation(any(), any(), any()) } returns Job()
+
     CommandLine(etlCommand, factory).execute("load-location", "/that/folder/file.gpkg")
-    coEvery { geopackageService.loadLocation(any(), any()) } just Runs
-    coVerify { geopackageService.loadLocation(File("/that/folder/file.gpkg"), expectedGeopkgProps) }
+
+    verifyOrder {
+      scriptellaService.runEtl(match { it.endsWith("etl/location") }, "pre-load.etl.xml", null)
+      scriptellaService.runEtl(match { it.endsWith("etl/location") }, "post-load.etl.xml", null)
+    }
+    coVerify(exactly = 1) {
+      geopackageService.loadLocation(File("/that/folder/file.gpkg"), *expectedGeopkgProps)
+    }
   }
 }
