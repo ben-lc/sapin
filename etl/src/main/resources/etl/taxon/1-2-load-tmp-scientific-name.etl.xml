@@ -34,7 +34,6 @@
         infraspecific_epithet,
         name_published_in,
         src_accepted_name_id,
-        src_original_name_id,
         src_parent_name_id,
         taxon_rank
       )

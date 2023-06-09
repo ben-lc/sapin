@@ -95,7 +95,7 @@ CREATE TABLE
 ALTER TABLE sapin.tmp_taxon_id_src_taxon_name_id_asso
 ADD PRIMARY KEY (src_taxon_name_id, taxon_id);
 
--- set accepted name and original name of taxon_scientific_name table
+-- set accepted name of taxon_scientific_name table
 UPDATE sapin.taxon_scientific_name tsn1
 SET
   accepted_name_id = (
@@ -104,19 +104,6 @@ SET
     FROM
       sapin.tmp_taxon_scientific_name ttsn1
       JOIN sapin.tmp_taxon_scientific_name ttsn2 ON ttsn1.src_accepted_name_id = ttsn2.src_taxon_name_id
-      JOIN sapin.taxon_scientific_name tsn2 ON ttsn2.scientific_name = tsn2.scientific_name
-    WHERE
-      ttsn1.src_taxon_name_id = tsn1.src_taxon_name_id
-  );
-
-UPDATE sapin.taxon_scientific_name tsn1
-SET
-  original_name_id = (
-    SELECT
-      tsn2.taxon_name_id
-    FROM
-      sapin.tmp_taxon_scientific_name ttsn1
-      JOIN sapin.tmp_taxon_scientific_name ttsn2 ON ttsn1.src_original_name_id = ttsn2.src_taxon_name_id
       JOIN sapin.taxon_scientific_name tsn2 ON ttsn2.scientific_name = tsn2.scientific_name
     WHERE
       ttsn1.src_taxon_name_id = tsn1.src_taxon_name_id
@@ -135,6 +122,3 @@ ADD CONSTRAINT taxon_scientific_name_taxon_id_fkey FOREIGN KEY (taxon_id) REFERE
 
 ALTER TABLE sapin.taxon_scientific_name
 ADD CONSTRAINT taxon_scientific_name_accepted_name_id_fkey FOREIGN KEY (accepted_name_id) REFERENCES sapin.taxon_scientific_name (taxon_name_id);
-
-ALTER TABLE sapin.taxon_scientific_name
-ADD CONSTRAINT taxon_scientific_name_original_name_id_fkey FOREIGN KEY (original_name_id) REFERENCES sapin.taxon_scientific_name (taxon_name_id);
