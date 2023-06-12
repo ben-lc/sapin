@@ -24,8 +24,7 @@
 
   <query connection-id="csv_vernacular">
     <script connection-id="db">
-      INSERT INTO
-      sapin.taxon_vernacular_name (
+      INSERT INTO sapin.taxon_vernacular_name (
         taxon_id,
         vernacular_name,
         language

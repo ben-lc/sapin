@@ -81,7 +81,7 @@ SET
 WHERE
   taxonomic_status != 'SYNONYM';
 
--- create temporary table to keep mapping between src_taxon_name_id and toxon_id
+-- create temporary table to keep mapping between src_taxon_name_id and taxon_id
 CREATE TABLE
   sapin.tmp_taxon_id_src_taxon_name_id_asso AS (
     SELECT
