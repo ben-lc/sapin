@@ -1,6 +1,6 @@
 plugins {
   id("org.springframework.boot")
-  id("org.flywaydb.flyway") version "9.17.0"
+  id("org.flywaydb.flyway") version "9.19.4"
   id("sapin.common-conventions")
   id("sapin.sql-conventions")
   id("sapin.kotlin-conventions")
@@ -14,9 +14,9 @@ repositories {
 
 extra["scriptellaVersion"] = "1.2"
 
-extra["geotoolsVersion"] = "28.2"
+extra["geotoolsVersion"] = "29.1"
 
-extra["picocliVersion"] = "4.7.0"
+extra["picocliVersion"] = "4.7.4"
 
 val scriptella by configurations.creating
 

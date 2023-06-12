@@ -3,7 +3,7 @@ plugins {
   kotlin("plugin.spring")
 }
 
-extra["testcontainersVersion"] = "1.18.0"
+extra["testcontainersVersion"] = "1.18.3"
 extra["springMockVersion"] = "4.0.2"
 
 dependencyManagement {

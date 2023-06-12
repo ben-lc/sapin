@@ -1,5 +1,5 @@
 plugins {
-  id("org.graalvm.buildtools.native") version "0.9.20"
+  id("org.graalvm.buildtools.native") version "0.9.22"
   id("org.springframework.boot")
   id("sapin.common-conventions")
   id("sapin.kotlin-conventions")
