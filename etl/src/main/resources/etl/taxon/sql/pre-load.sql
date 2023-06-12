@@ -39,3 +39,19 @@ DROP CONSTRAINT taxon_scientific_name_taxon_id_fkey;
 
 ALTER TABLE sapin.taxon_scientific_name
 DROP CONSTRAINT taxon_scientific_name_accepted_name_id_fkey;
+
+CREATE TABLE IF NOT EXISTS
+  sapin.tmp_taxon_distribution (
+    taxon_id integer REFERENCES sapin.taxon (taxon_id),
+    location_id text,
+    location_name tsvector,
+    location_country text,
+    location_country_id varchar(2)
+  );
+
+CREATE TABLE IF NOT EXISTS
+  sapin.tmp_location_taxon_distribution_mapping (
+    loc_id integer REFERENCES sapin.location (loc_id) PRIMARY KEY,
+    location_id_in text,
+    location_name_contains text
+  )

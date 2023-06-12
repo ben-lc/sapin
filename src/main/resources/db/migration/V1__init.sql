@@ -109,3 +109,10 @@ CREATE INDEX IF NOT EXISTS location_loc_level_idx ON sapin.location (level);
 CREATE INDEX IF NOT EXISTS location_geom_idx ON sapin.location USING GIST (geom);
 
 CREATE INDEX IF NOT EXISTS location_tree_path_idx ON sapin.location USING GIST (tree_path);
+
+CREATE TABLE IF NOT EXISTS
+  sapin.location_taxon_asso (
+    loc_id integer REFERENCES sapin.location (loc_id),
+    taxon_id integer REFERENCES sapin.taxon (taxon_id),
+    PRIMARY KEY (loc_id, taxon_id)
+  );
