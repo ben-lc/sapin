@@ -9,13 +9,8 @@ import org.springframework.data.relational.core.mapping.Table
 data class Location(
     @Id @Column("loc_id") val id: Int? = null,
     val name: String,
-    val level: Level,
+    val level: Int,
     val levelLocalName: String? = null,
     val levelLocalNameEn: String? = null,
     val isoId: String? = null
-) {
-  enum class Level {
-    TERRITORY,
-    TERRITORY_SUBDIV_L1
-  }
-}
+)

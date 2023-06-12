@@ -3,9 +3,14 @@ package com.github.ben_lc.sapin.etl
 import com.github.ben_lc.sapin.etl.cli.EtlCommand
 import com.github.ben_lc.sapin.etl.service.GeopackageService
 import com.github.ben_lc.sapin.etl.service.ScriptellaService
-import com.github.ben_lc.sapin.model.Location
 import com.ninjasquad.springmockk.MockkBean
-import io.mockk.*
+import io.mockk.Runs
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.every
+import io.mockk.just
+import io.mockk.verify
+import io.mockk.verifyOrder
 import java.io.File
 import kotlinx.coroutines.Job
 import org.junit.jupiter.api.Test
@@ -54,13 +59,13 @@ internal class EtlApplicationTests {
         arrayOf(
             GeopackageService.GpkgProps(
                 tableName = "ADM_0",
-                level = Location.Level.TERRITORY,
+                level = 1,
                 isoIdColumn = "GID_0",
                 nameColumn = "COUNTRY",
                 srcId = "GID_0"),
             GeopackageService.GpkgProps(
                 tableName = "ADM_1",
-                level = Location.Level.TERRITORY_SUBDIV_L1,
+                level = 2,
                 isoIdColumn = "ISO_1",
                 nameColumn = "NAME_1",
                 levelLocalName = "TYPE_1",

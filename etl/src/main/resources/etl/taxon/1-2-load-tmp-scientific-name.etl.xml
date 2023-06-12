@@ -21,7 +21,7 @@
 
   <query connection-id="csv_taxon">
     <!-- Filter for GBIF backbone taxonomic data: excludes all names with "unranked" taxonRank -->
-    ,,,,,,,,,,,^(?!unranked).*$
+    ,,,,,,,,,,,^(?!unranked).*$,,,,,,Animalia|Plantae|Fungi
     <script connection-id="db">
       INSERT INTO sapin.tmp_taxon_scientific_name (
         src_taxon_name_id,
@@ -34,7 +34,6 @@
         infraspecific_epithet,
         name_published_in,
         src_accepted_name_id,
-        src_original_name_id,
         src_parent_name_id,
         taxon_rank
       )

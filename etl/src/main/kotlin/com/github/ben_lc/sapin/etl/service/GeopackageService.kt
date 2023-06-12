@@ -4,7 +4,6 @@ import com.github.ben_lc.sapin.etl.model.LocationEtl
 import com.github.ben_lc.sapin.etl.repository.LocationEtlRepository
 import com.github.ben_lc.sapin.etl.util.getAttribute
 import com.github.ben_lc.sapin.etl.util.getAttributeOrNullForValue
-import com.github.ben_lc.sapin.model.Location
 import java.io.File
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.flow
@@ -52,7 +51,7 @@ class GeopackageService(val locationRepo: LocationEtlRepository) {
       val tableName: String,
       val isoIdColumn: String? = null,
       val nameColumn: String,
-      val level: Location.Level,
+      val level: Int,
       val levelLocalName: String? = null,
       val levelLocalNameEn: String? = null,
       val srcId: String,

@@ -1,0 +1,72 @@
+<!DOCTYPE etl SYSTEM "http://scriptella.org/dtd/etl.dtd">
+<etl>
+  <description>Import vernacular names</description>
+
+  <connection
+    id="csv_distribution"
+    driver="csv"
+    url="${csv.location}/taxon/Distribution.tsv"
+  >
+    separator=\t
+    encoding=UTF-8
+    quote=
+    null_string=
+  </connection>
+  <connection
+    id="db"
+    url="${db.url}"
+    driver="postgresql"
+    user="${db.user}"
+    password="${db.password}"
+  >
+    statement.batchSize=100
+  </connection>
+
+  <connection
+    id="csv_mapping"
+    driver="csv"
+    url="data/Location-Distribution-mapping.tsv"
+  >
+    separator=\t
+    encoding=UTF-8
+    quote=
+    null_string=
+  </connection>
+
+  <query connection-id="csv_distribution">
+    ,^(?!.*marineregions).*$
+    <script connection-id="db">
+      INSERT INTO sapin.tmp_taxon_distribution (
+        taxon_id,
+        location_id,
+        location_name,
+        location_country,
+        location_country_id
+      )
+      VALUES (
+        (SELECT taxon_id
+         FROM sapin.tmp_taxon_id_src_taxon_name_id_asso
+         WHERE src_taxon_name_id = ?taxonID),
+        ?locationID,
+        to_tsvector('simple', ?locality),
+        ?country,
+        ?countryCode
+      )
+    </script>
+  </query>
+
+  <query connection-id="csv_mapping">
+    <script connection-id="db">
+      INSERT INTO sapin.tmp_location_taxon_distribution_mapping (
+        loc_id,
+        location_id_in,
+        location_name_contains
+      )
+      VALUES (
+        ?loc_id::integer,
+        ?location_id_in,
+        ?location_name_contains
+      )
+    </script>
+  </query>
+</etl>

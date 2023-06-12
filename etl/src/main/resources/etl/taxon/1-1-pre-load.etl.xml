@@ -17,6 +17,6 @@
   />
 
   <script connection-id="db">
-    <include href="sql/pre-insert-taxon.sql" />
+    <include href="sql/pre-load.sql" />
   </script>
 </etl>

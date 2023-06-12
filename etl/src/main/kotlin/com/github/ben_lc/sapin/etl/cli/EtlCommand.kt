@@ -3,7 +3,6 @@ package com.github.ben_lc.sapin.etl.cli
 import com.github.ben_lc.sapin.etl.service.GeopackageService
 import com.github.ben_lc.sapin.etl.service.GeopackageService.GpkgProps
 import com.github.ben_lc.sapin.etl.service.ScriptellaService
-import com.github.ben_lc.sapin.model.Location
 import java.io.File
 import java.util.concurrent.Callable
 import kotlinx.coroutines.runBlocking
@@ -41,13 +40,13 @@ class EtlCommand(
           gpkg,
           GpkgProps(
               tableName = "ADM_0",
-              level = Location.Level.TERRITORY,
+              level = 1,
               isoIdColumn = "GID_0",
               nameColumn = "COUNTRY",
               srcId = "GID_0"),
           GpkgProps(
               tableName = "ADM_1",
-              level = Location.Level.TERRITORY_SUBDIV_L1,
+              level = 2,
               isoIdColumn = "ISO_1",
               nameColumn = "NAME_1",
               levelLocalName = "TYPE_1",
