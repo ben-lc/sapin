@@ -1,9 +1,7 @@
 package com.github.ben_lc.sapin.repository
 
-import com.github.ben_lc.sapin.model.Location
 import io.r2dbc.postgresql.PostgresqlConnectionConfiguration
 import io.r2dbc.postgresql.PostgresqlConnectionFactory
-import io.r2dbc.postgresql.codec.EnumCodec
 import io.r2dbc.spi.ConnectionFactory
 import io.r2dbc.spi.ConnectionFactoryOptions
 import org.springframework.beans.factory.annotation.Autowired
@@ -27,14 +25,6 @@ class R2dbcConfig : AbstractR2dbcConfiguration() {
             .database(baseOptions.getValue(ConnectionFactoryOptions.DATABASE)!! as String)
             .username(r2dbcProperties.username)
             .password(r2dbcProperties.password)
-            .codecRegistrar(
-                EnumCodec.builder()
-                    .withEnum("location_level_enum", Location.Level::class.java)
-                    .build())
             .build())
-  }
-
-  override fun getCustomConverters(): MutableList<Any> {
-    return mutableListOf(LocationLevelConverter())
   }
 }

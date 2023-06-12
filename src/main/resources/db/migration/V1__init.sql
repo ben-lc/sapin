@@ -86,13 +86,14 @@ CREATE TABLE IF NOT EXISTS
 CREATE INDEX IF NOT EXISTS taxon_vernacular_name_trgm_idx ON sapin.taxon_vernacular_name USING GIST (vernacular_name gist_trgm_ops);
 
 -- location data
-CREATE TYPE sapin.location_level_enum AS ENUM('TERRITORY', 'TERRITORY_SUBDIV_L1');
-
 CREATE TABLE IF NOT EXISTS
   sapin.location (
     loc_id serial PRIMARY KEY,
     parent_loc_id integer REFERENCES sapin.location (loc_id),
-    level sapin.location_level_enum NOT NULL,
+    level smallint NOT NULL CHECK (
+      level > 0
+      AND level < 4
+    ),
     name text NOT NULL,
     level_local_name text,
     level_local_name_en text,

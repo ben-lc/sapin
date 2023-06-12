@@ -1,7 +1,6 @@
 package com.github.ben_lc.sapin.etl.repository
 
 import com.github.ben_lc.sapin.etl.model.LocationEtl
-import com.github.ben_lc.sapin.model.Location
 import com.github.ben_lc.sapin.repository.R2dbcConfig
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.asFlow
@@ -27,14 +26,14 @@ class LocationEtlRepositoryTests {
     val location1 =
         LocationEtl(
             name = "Argentina",
-            level = Location.Level.TERRITORY,
+            level = 1,
             isoId = "ARG",
             srcId = "ARG",
             geom = "POLYGON ((10 30, 30 30, 30 10, 10 10, 10 30))")
     val location2 =
         LocationEtl(
             name = "Brazil",
-            level = Location.Level.TERRITORY,
+            level = 1,
             isoId = "BRA",
             srcId = "BRA",
             geom = "POLYGON ((10 30, 30 30, 30 10, 10 10, 10 30))")
@@ -43,16 +42,12 @@ class LocationEtlRepositoryTests {
     assertThat(locationRepo.findByName("Argentina"))
         .usingRecursiveComparison()
         .ignoringFields("id")
-        .isEqualTo(
-            LocationEtl(
-                name = "Argentina", level = Location.Level.TERRITORY, isoId = "ARG", geom = null))
+        .isEqualTo(LocationEtl(name = "Argentina", level = 1, isoId = "ARG", geom = null))
 
     assertThat(locationRepo.findByName("Brazil"))
         .usingRecursiveComparison()
         .ignoringFields("id")
-        .isEqualTo(
-            LocationEtl(
-                name = "Brazil", level = Location.Level.TERRITORY, isoId = "BRA", geom = null))
+        .isEqualTo(LocationEtl(name = "Brazil", level = 1, isoId = "BRA", geom = null))
   }
 
   @Test
@@ -60,7 +55,7 @@ class LocationEtlRepositoryTests {
     val location1 =
         LocationEtl(
             name = "Bretagne",
-            level = Location.Level.TERRITORY_SUBDIV_L1,
+            level = 2,
             isoId = "FR-BRE",
             levelLocalNameEn = "Region",
             levelLocalName = "Région",
@@ -69,7 +64,7 @@ class LocationEtlRepositoryTests {
     val location2 =
         LocationEtl(
             name = "Bourgogne-Franche-Comté",
-            level = Location.Level.TERRITORY_SUBDIV_L1,
+            level = 2,
             isoId = "FR-BFC",
             levelLocalNameEn = "Region",
             levelLocalName = "Région",
@@ -83,7 +78,7 @@ class LocationEtlRepositoryTests {
         .isEqualTo(
             LocationEtl(
                 name = "Bretagne",
-                level = Location.Level.TERRITORY_SUBDIV_L1,
+                level = 2,
                 isoId = "FR-BRE",
                 levelLocalNameEn = "Region",
                 levelLocalName = "Région",
@@ -95,7 +90,7 @@ class LocationEtlRepositoryTests {
         .isEqualTo(
             LocationEtl(
                 name = "Bourgogne-Franche-Comté",
-                level = Location.Level.TERRITORY_SUBDIV_L1,
+                level = 2,
                 isoId = "FR-BFC",
                 levelLocalNameEn = "Region",
                 levelLocalName = "Région",
@@ -105,20 +100,14 @@ class LocationEtlRepositoryTests {
   @Test
   fun `findByName should returns location by its name without fetching geom`(): Unit = runBlocking {
     assertThat(locationRepo.findByName("Italy"))
-        .isEqualTo(
-            LocationEtl(
-                id = 1,
-                name = "Italy",
-                level = Location.Level.TERRITORY,
-                isoId = "ITA",
-                geom = null))
+        .isEqualTo(LocationEtl(id = 1, name = "Italy", level = 1, isoId = "ITA", geom = null))
 
     assertThat(locationRepo.findByName("Nouvelle-Aquitaine"))
         .isEqualTo(
             LocationEtl(
                 id = 4,
                 name = "Nouvelle-Aquitaine",
-                level = Location.Level.TERRITORY_SUBDIV_L1,
+                level = 2,
                 levelLocalName = "Région",
                 levelLocalNameEn = "Region",
                 isoId = "FR-NAQ",
