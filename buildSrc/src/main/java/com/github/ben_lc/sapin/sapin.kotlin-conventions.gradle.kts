@@ -17,5 +17,8 @@ tasks.withType<KotlinCompile> {
 tasks.withType<Test> { useJUnitPlatform() }
 
 spotless {
-  kotlin { ktfmt() }
+  kotlin {
+    targetExclude("**/generated/**")
+    ktfmt()
+  }
 }

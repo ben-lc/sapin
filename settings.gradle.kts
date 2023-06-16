@@ -7,3 +7,5 @@ include("etl")
 include("model")
 
 include("repository")
+
+include("graphql")
