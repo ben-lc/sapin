@@ -20,15 +20,16 @@ class LocationEtlRepository(private val template: R2dbcEntityTemplate) {
         template.databaseClient
             .sql(
                 """INSERT INTO sapin.location (level, name, geom, level_local_name, level_local_name_en, iso_id, src_loc_id, src_parent_loc_id)
-                   VALUES ($1, $2, ST_GeomFromText($3), $4, $5, $6, $7, $8)""")
+                   VALUES ($1, $2, ST_GeomFromText($3, $4), $5, $6, $7, $8, $9)""")
             .bind(0, it.level)
             .bind(1, it.name)
             .bind(2, it.geom!!)
-            .bindNullable<String>(3, it.levelLocalName)
-            .bindNullable<String>(4, it.levelLocalNameEn)
-            .bindNullable<String>(5, it.isoId)
-            .bindNullable<String>(6, it.srcId)
-            .bindNullable<String>(7, it.srcParentId)
+            .bind(3, it.srid!!)
+            .bindNullable<String>(4, it.levelLocalName)
+            .bindNullable<String>(5, it.levelLocalNameEn)
+            .bindNullable<String>(6, it.isoId)
+            .bindNullable<String>(7, it.srcId)
+            .bindNullable<String>(8, it.srcParentId)
             .await()
       }
 

@@ -2,7 +2,6 @@ package com.github.ben_lc.sapin.etl.repository
 
 import com.github.ben_lc.sapin.etl.model.LocationEtl
 import com.github.ben_lc.sapin.repository.R2dbcConfig
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
@@ -17,6 +16,7 @@ import org.springframework.test.context.jdbc.Sql
 @ContextConfiguration(initializers = [DatabaseContextInitializer::class])
 @Import(R2dbcConfig::class, LocationEtlRepository::class)
 @Sql("location-data.sql")
+@Sql("clean-location-data.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 class LocationEtlRepositoryTests {
 
   @Autowired lateinit var locationRepo: LocationEtlRepository
@@ -29,25 +29,27 @@ class LocationEtlRepositoryTests {
             level = 1,
             isoId = "ARG",
             srcId = "ARG",
-            geom = "POLYGON ((10 30, 30 30, 30 10, 10 10, 10 30))")
+            geom = "POLYGON ((10 30, 30 30, 30 10, 10 10, 10 30))",
+            srid = 4326)
     val location2 =
         LocationEtl(
             name = "Brazil",
             level = 1,
             isoId = "BRA",
             srcId = "BRA",
-            geom = "POLYGON ((10 30, 30 30, 30 10, 10 10, 10 30))")
+            geom = "POLYGON ((10 30, 30 30, 30 10, 10 10, 10 30))",
+            srid = 4326)
     locationRepo.saveAll(listOf(location1, location2).asFlow())
 
     assertThat(locationRepo.findByName("Argentina"))
         .usingRecursiveComparison()
         .ignoringFields("id")
-        .isEqualTo(LocationEtl(name = "Argentina", level = 1, isoId = "ARG", geom = null))
+        .isEqualTo(LocationEtl(name = "Argentina", level = 1, isoId = "ARG"))
 
     assertThat(locationRepo.findByName("Brazil"))
         .usingRecursiveComparison()
         .ignoringFields("id")
-        .isEqualTo(LocationEtl(name = "Brazil", level = 1, isoId = "BRA", geom = null))
+        .isEqualTo(LocationEtl(name = "Brazil", level = 1, isoId = "BRA"))
   }
 
   @Test
@@ -60,7 +62,8 @@ class LocationEtlRepositoryTests {
             levelLocalNameEn = "Region",
             levelLocalName = "Région",
             srcId = "FR.2",
-            geom = "POLYGON ((10 30, 30 30, 30 10, 10 10, 10 30))")
+            geom = "POLYGON ((10 30, 30 30, 30 10, 10 10, 10 30))",
+            srid = 4326)
     val location2 =
         LocationEtl(
             name = "Bourgogne-Franche-Comté",
@@ -69,9 +72,9 @@ class LocationEtlRepositoryTests {
             levelLocalNameEn = "Region",
             levelLocalName = "Région",
             srcId = "FR.3",
-            geom = "POLYGON ((10 30, 30 30, 30 10, 10 10, 10 30))")
+            geom = "POLYGON ((10 30, 30 30, 30 10, 10 10, 10 30))",
+            srid = 4326)
     locationRepo.saveAll(listOf(location1, location2).asFlow())
-    delay(10000L)
     assertThat(locationRepo.findByName("Bretagne"))
         .usingRecursiveComparison()
         .ignoringFields("id")
@@ -81,8 +84,7 @@ class LocationEtlRepositoryTests {
                 level = 2,
                 isoId = "FR-BRE",
                 levelLocalNameEn = "Region",
-                levelLocalName = "Région",
-                geom = null))
+                levelLocalName = "Région"))
 
     assertThat(locationRepo.findByName("Bourgogne-Franche-Comté"))
         .usingRecursiveComparison()
@@ -93,8 +95,7 @@ class LocationEtlRepositoryTests {
                 level = 2,
                 isoId = "FR-BFC",
                 levelLocalNameEn = "Region",
-                levelLocalName = "Région",
-                geom = null))
+                levelLocalName = "Région"))
   }
 
   @Test
@@ -110,7 +111,6 @@ class LocationEtlRepositoryTests {
                 level = 2,
                 levelLocalName = "Région",
                 levelLocalNameEn = "Region",
-                isoId = "FR-NAQ",
-                geom = null))
+                isoId = "FR-NAQ"))
   }
 }

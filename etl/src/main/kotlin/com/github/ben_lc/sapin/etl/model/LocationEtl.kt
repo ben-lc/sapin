@@ -15,6 +15,7 @@ data class LocationEtl(
     val levelLocalNameEn: String? = null,
     val isoId: String? = null,
     val geom: String? = null,
+    val srid: Int? = null,
     @Column("src_loc_id") val srcId: String? = null,
     @Column("src_parent_loc_id") val srcParentId: String? = null
 ) {}
