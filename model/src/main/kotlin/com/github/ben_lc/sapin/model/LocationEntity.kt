@@ -6,7 +6,7 @@ import org.springframework.data.relational.core.mapping.Table
 
 /** Data class for Location */
 @Table("sapin.location")
-data class Location(
+data class LocationEntity(
     @Id @Column("loc_id") val id: Int? = null,
     val name: String,
     val level: Int,

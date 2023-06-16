@@ -1,0 +1,21 @@
+type Query {
+  locationById(id: ID!): Location
+  locationsBySimilarName(
+    name: String!
+    level: Int!
+    limit: Int = 10
+  ): [Location]
+  locationsByGeolocation(
+    longitude: Float!
+    latitude: Float!
+    level: Int
+  ): [Location]
+}
+type Location {
+  id: ID!
+  name: String!
+  isoId: String
+  level: Int!
+  levelLocalName: String
+  levelLocalNameEn: String
+}
