@@ -13,12 +13,18 @@ import org.springframework.test.context.jdbc.Sql
 
 @DataR2dbcTest
 @ContextConfiguration(initializers = [DatabaseContextInitializer::class])
-@Import(R2dbcConfig::class)
+@Import(R2dbcConfig::class, LocationRepository::class)
 @Sql("location-data.sql")
 @Sql("clean-location-data.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 class LocationRepositoryTests {
 
   @Autowired lateinit var locationRepo: LocationRepository
+
+  @Test
+  fun `findById should return location matching given id`(): Unit = runBlocking {
+    assertThat(locationRepo.findById(2))
+        .isEqualTo(LocationEntity(id = 2, name = "Japan", level = 1, isoId = "JPN"))
+  }
 
   @Test
   fun `findBySimilarName should return locations based on name similarity`(): Unit = runBlocking {
@@ -32,15 +38,24 @@ class LocationRepositoryTests {
   @Test
   fun `findByGeolocation should return locations based on coordinates`(): Unit = runBlocking {
     assertThat(locationRepo.findAllByGeolocation(-0.5759137982167051, 44.823353822211686).toList())
-        .containsExactlyInAnyOrder(
+        .containsExactly(
             LocationEntity(id = 3, name = "France", level = 1, isoId = "FRA"),
             LocationEntity(
                 id = 4,
+                parentId = 3,
                 name = "Nouvelle-Aquitaine",
                 level = 2,
                 isoId = "FR-NAQ",
                 levelLocalName = "Région",
-                levelLocalNameEn = "Region"))
+                levelLocalNameEn = "Region"),
+            LocationEntity(
+                id = 5,
+                parentId = 4,
+                name = "Gironde",
+                level = 3,
+                isoId = "FR-33",
+                levelLocalName = "Département",
+                levelLocalNameEn = "Department"))
   }
   @Test
   fun `findByGeolocationAndLevel should return locations based on coordinates and level`(): Unit =
@@ -52,10 +67,40 @@ class LocationRepositoryTests {
             .containsExactly(
                 LocationEntity(
                     id = 4,
+                    parentId = 3,
                     name = "Nouvelle-Aquitaine",
                     level = 2,
                     isoId = "FR-NAQ",
                     levelLocalName = "Région",
                     levelLocalNameEn = "Region"))
+      }
+
+  @Test
+  fun `findChildrenByIdIn should return children of given location id`(): Unit = runBlocking {
+    assertThat(locationRepo.findChildrenByIdIn(listOf(3)).toList())
+        .containsExactly(
+            LocationEntity(
+                id = 4,
+                parentId = 3,
+                name = "Nouvelle-Aquitaine",
+                level = 2,
+                isoId = "FR-NAQ",
+                levelLocalName = "Région",
+                levelLocalNameEn = "Region"))
+  }
+
+  @Test
+  fun `findParentsById should return ancestors of given location id`(): Unit = runBlocking {
+    assertThat(locationRepo.findParentsById(4).toList())
+        .containsExactly(LocationEntity(id = 3, name = "France", level = 1, isoId = "FRA"))
+  }
+
+  @Test
+  fun `findParentByIdIn should return ancestors of given list of location id`(): Unit =
+      runBlocking {
+        assertThat(locationRepo.findParentByIdIn(listOf(4, 6)).toList())
+            .containsExactlyInAnyOrder(
+                LocationEntity(id = 3, name = "France", level = 1, isoId = "FRA"),
+                LocationEntity(id = 1, name = "Italy", level = 1, isoId = "ITA"))
       }
 }

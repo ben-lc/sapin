@@ -7,7 +7,7 @@ fun LocationEntity.toGraphqlType(): Location =
     Location(
         id = this.id.toString(),
         name = this.name,
-        level = this.level,
+        level = this.level.toInt(),
         levelLocalName = this.levelLocalName,
         levelLocalNameEn = this.levelLocalNameEn,
         isoId = this.isoId)
