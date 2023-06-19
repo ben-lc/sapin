@@ -4,6 +4,7 @@ import com.github.ben_lc.sapin.etl.model.LocationEtl
 import com.github.ben_lc.sapin.etl.repository.LocationEtlRepository
 import com.github.ben_lc.sapin.etl.util.getAttribute
 import com.github.ben_lc.sapin.etl.util.getAttributeOrNullForValue
+import java.io.File
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
@@ -12,7 +13,6 @@ import org.locationtech.jts.geom.MultiPolygon
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
-import java.io.File
 
 @Component
 class GeopackageService(val locationRepo: LocationEtlRepository) {
