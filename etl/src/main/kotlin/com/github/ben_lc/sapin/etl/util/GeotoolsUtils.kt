@@ -2,6 +2,7 @@ package com.github.ben_lc.sapin.etl.util
 
 import org.opengis.feature.simple.SimpleFeature
 
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 inline fun <reified T> SimpleFeature.getAttribute(name: String?): T? {
   if (name.isNullOrEmpty()) return null
   val value = this.getAttribute(name)
