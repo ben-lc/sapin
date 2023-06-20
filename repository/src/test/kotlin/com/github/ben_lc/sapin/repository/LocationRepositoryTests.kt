@@ -1,6 +1,6 @@
 package com.github.ben_lc.sapin.repository
 
-import com.github.ben_lc.sapin.model.Location
+import com.github.ben_lc.sapin.model.LocationEntity
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
@@ -23,24 +23,24 @@ class LocationRepositoryTests {
   @Test
   fun `findById should return location matching given id`(): Unit = runBlocking {
     assertThat(locationRepo.findById(2))
-        .isEqualTo(Location(id = 2, name = "Japan", level = 1, isoId = "JPN"))
+        .isEqualTo(LocationEntity(id = 2, name = "Japan", level = 1, isoId = "JPN"))
   }
 
   @Test
   fun `findBySimilarName should return locations based on name similarity`(): Unit = runBlocking {
     assertThat(locationRepo.findAllBySimilarName("jpan", 1, 1).toList())
-        .containsExactly(Location(id = 2, name = "Japan", level = 1, isoId = "JPN"))
+        .containsExactly(LocationEntity(id = 2, name = "Japan", level = 1, isoId = "JPN"))
 
     assertThat(locationRepo.findAllBySimilarName("trince", 1, 1).toList())
-        .containsExactly(Location(id = 3, name = "France", level = 1, isoId = "FRA"))
+        .containsExactly(LocationEntity(id = 3, name = "France", level = 1, isoId = "FRA"))
   }
 
   @Test
   fun `findByGeolocation should return locations based on coordinates`(): Unit = runBlocking {
     assertThat(locationRepo.findAllByGeolocation(-0.5759137982167051, 44.823353822211686).toList())
         .containsExactly(
-            Location(id = 3, name = "France", level = 1, isoId = "FRA"),
-            Location(
+            LocationEntity(id = 3, name = "France", level = 1, isoId = "FRA"),
+            LocationEntity(
                 id = 4,
                 parentId = 3,
                 name = "Nouvelle-Aquitaine",
@@ -48,7 +48,7 @@ class LocationRepositoryTests {
                 isoId = "FR-NAQ",
                 levelLocalName = "Région",
                 levelLocalNameEn = "Region"),
-            Location(
+            LocationEntity(
                 id = 5,
                 parentId = 4,
                 name = "Gironde",
@@ -65,7 +65,7 @@ class LocationRepositoryTests {
                     .findAllByGeolocationAndLevel(-0.5759137982167051, 44.823353822211686, 2)
                     .toList())
             .containsExactly(
-                Location(
+                LocationEntity(
                     id = 4,
                     parentId = 3,
                     name = "Nouvelle-Aquitaine",
@@ -79,7 +79,7 @@ class LocationRepositoryTests {
   fun `findChildrenByIdIn should return children of given location id`(): Unit = runBlocking {
     assertThat(locationRepo.findChildrenByIdIn(listOf(3)).toList())
         .containsExactly(
-            Location(
+            LocationEntity(
                 id = 4,
                 parentId = 3,
                 name = "Nouvelle-Aquitaine",
@@ -92,15 +92,14 @@ class LocationRepositoryTests {
   @Test
   fun `findParentsById should return ancestors of given location id`(): Unit = runBlocking {
     assertThat(locationRepo.findParentsById(4).toList())
-        .containsExactly(Location(id = 3, name = "France", level = 1, isoId = "FRA"))
+        .containsExactly(LocationEntity(id = 3, name = "France", level = 1, isoId = "FRA"))
   }
 
   @Test
-  fun `findParentByIdIn should return ancestors of given list of location id`(): Unit =
-      runBlocking {
-        assertThat(locationRepo.findParentByIdIn(listOf(4, 6)).toList())
-            .containsExactlyInAnyOrder(
-                Location(id = 3, name = "France", level = 1, isoId = "FRA"),
-                Location(id = 1, name = "Italy", level = 1, isoId = "ITA"))
-      }
+  fun `findAllById should return list of locations matching ids`(): Unit = runBlocking {
+    assertThat(locationRepo.findAllById(listOf(3, 1)).toList())
+        .containsExactlyInAnyOrder(
+            LocationEntity(id = 3, name = "France", level = 1, isoId = "FRA"),
+            LocationEntity(id = 1, name = "Italy", level = 1, isoId = "ITA"))
+  }
 }
