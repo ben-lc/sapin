@@ -18,4 +18,6 @@ type Location {
   level: Int!
   levelLocalName: String
   levelLocalNameEn: String
+  parents: [Location]
+  children: [Location]
 }

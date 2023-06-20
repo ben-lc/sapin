@@ -1,6 +1,6 @@
 package com.github.ben_lc.sapin.repository
 
-import com.github.ben_lc.sapin.model.LocationEntity
+import com.github.ben_lc.sapin.model.Location
 import io.r2dbc.spi.Row
 import io.r2dbc.spi.RowMetadata
 import kotlinx.coroutines.flow.Flow
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository
 @Repository
 class LocationRepository(private val databaseClient: DatabaseClient) {
 
-  suspend fun findById(id: Int): LocationEntity? =
+  suspend fun findById(id: Int): Location? =
       databaseClient
           .sql(
               """
@@ -32,7 +32,7 @@ class LocationRepository(private val databaseClient: DatabaseClient) {
           .bind("id", id)
           .map(MAPPER)
           .awaitSingleOrNull()
-  suspend fun findAllBySimilarName(name: String, level: Int, size: Int = 10): Flow<LocationEntity> =
+  suspend fun findAllBySimilarName(name: String, level: Int, size: Int = 10): Flow<Location> =
       databaseClient
           .sql(
               """
@@ -60,7 +60,7 @@ class LocationRepository(private val databaseClient: DatabaseClient) {
           .map(MAPPER)
           .flow()
 
-  suspend fun findAllByGeolocation(longitude: Double, latitude: Double): Flow<LocationEntity> =
+  suspend fun findAllByGeolocation(longitude: Double, latitude: Double): Flow<Location> =
       databaseClient
           .sql(
               """
@@ -86,7 +86,7 @@ class LocationRepository(private val databaseClient: DatabaseClient) {
       longitude: Double,
       latitude: Double,
       level: Int
-  ): Flow<LocationEntity> =
+  ): Flow<Location> =
       databaseClient
           .sql(
               """
@@ -110,7 +110,7 @@ class LocationRepository(private val databaseClient: DatabaseClient) {
           .map(MAPPER)
           .flow()
 
-  suspend fun findParentsById(id: Int): Flow<LocationEntity> =
+  suspend fun findParentsById(id: Int): Flow<Location> =
       databaseClient
           .sql(
               """
@@ -133,7 +133,7 @@ class LocationRepository(private val databaseClient: DatabaseClient) {
           .map(MAPPER)
           .flow()
 
-  suspend fun findParentByIdIn(ids: Collection<Int>): Flow<LocationEntity> =
+  suspend fun findParentByIdIn(ids: Collection<Int>): Flow<Location> =
       databaseClient
           .sql(
               """
@@ -155,7 +155,7 @@ class LocationRepository(private val databaseClient: DatabaseClient) {
           .map(MAPPER)
           .flow()
 
-  suspend fun findChildrenByIdIn(ids: Collection<Int>): Flow<LocationEntity> =
+  suspend fun findChildrenByIdIn(ids: Collection<Int>): Flow<Location> =
       databaseClient
           .sql(
               """
@@ -177,8 +177,8 @@ class LocationRepository(private val databaseClient: DatabaseClient) {
           .flow()
 }
 
-val MAPPER: (Row, RowMetadata) -> LocationEntity = { row, _ ->
-  LocationEntity(
+val MAPPER: (Row, RowMetadata) -> Location = { row, _ ->
+  Location(
       id = row.get("loc_id") as Int,
       parentId = row.get("parent_loc_id") as Int?,
       name = row.get("name") as String,
