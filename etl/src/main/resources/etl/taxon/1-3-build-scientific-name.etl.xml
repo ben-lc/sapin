@@ -30,16 +30,17 @@
     in source data we sort them by taxonomic_status to get ACCEPTED first and ignore others -->
     WITH scientific_name AS (
       SELECT
-        src_taxon_name_id,
+        src_id,
+        rank,
         taxonomic_status,
-        scientific_name,
+        name,
         canonical_name,
-        scientific_name_authorship,
+        authorship,
         generic_name,
         specific_epithet,
         infraspecific_epithet,
         name_published_in,
-        row_number() OVER (PARTITION BY scientific_name ORDER BY
+        row_number() OVER (PARTITION BY name ORDER BY
     taxonomic_status) AS row_number
       FROM
         sapin.tmp_taxon_scientific_name
@@ -49,22 +50,24 @@
     WHERE row_number = 1
     <script connection-id="db2">
       INSERT INTO sapin.taxon_scientific_name (
-        src_taxon_name_id,
+        src_id,
+        rank,
         taxonomic_status,
-        scientific_name,
+        name,
         canonical_name,
-        scientific_name_authorship,
+        authorship,
         generic_name,
         specific_epithet,
         infraspecific_epithet,
         name_published_in
       )
       VALUES (
-        ?src_taxon_name_id,
+        ?src_id,
+        ?rank::sapin.taxon_rank_enum,
         ?taxonomic_status::sapin.taxonomic_status_enum,
-        ?scientific_name,
+        ?name,
         ?canonical_name,
-        ?scientific_name_authorship,
+        ?authorship,
         ?generic_name,
         ?specific_epithet,
         ?infraspecific_epithet,

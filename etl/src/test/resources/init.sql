@@ -16,8 +16,8 @@ CREATE SCHEMA IF NOT EXISTS sapin;
 -- location data
 CREATE TABLE IF NOT EXISTS
   sapin.location (
-    loc_id serial PRIMARY KEY,
-    parent_loc_id integer REFERENCES sapin.location (loc_id),
+    id serial PRIMARY KEY,
+    parent_id integer REFERENCES sapin.location (id),
     level smallint NOT NULL CHECK (level > 0 AND level < 4),
     name text NOT NULL,
     level_local_name text,
@@ -26,6 +26,6 @@ CREATE TABLE IF NOT EXISTS
     parent_iso_id text,
     geom geometry NOT NULL,
     tree_path ltree,
-    src_loc_id text NOT NULL,
-    src_parent_loc_id text
+    src_id text NOT NULL,
+    src_parent_id text
   );

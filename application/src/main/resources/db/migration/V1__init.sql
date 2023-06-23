@@ -31,65 +31,71 @@ CREATE TYPE sapin.taxonomic_status_enum AS ENUM('ACCEPTED', 'DOUBTFUL', 'SYNONYM
 
 CREATE TABLE IF NOT EXISTS
   sapin.taxon (
-    taxon_id serial PRIMARY KEY,
-    src_taxon_name_id text NOT NULL,
-    parent_taxon_id integer REFERENCES sapin.taxon (taxon_id),
-    taxon_rank sapin.taxon_rank_enum NOT NULL,
+    id serial PRIMARY KEY,
+    src_name_id text NOT NULL,
+    parent_id integer REFERENCES sapin.taxon (id),
+    rank sapin.taxon_rank_enum NOT NULL,
     accepted_name text NOT NULL,
     tree_path ltree,
     UNIQUE (accepted_name)
   );
 
-CREATE UNIQUE INDEX IF NOT EXISTS taxon_src_taxon_name_id_idx ON sapin.taxon (src_taxon_name_id);
+CREATE UNIQUE INDEX IF NOT EXISTS taxon_src_name_id_idx ON sapin.taxon (src_name_id);
 
-CREATE INDEX IF NOT EXISTS taxon_parent_taxon_id_idx ON sapin.taxon (parent_taxon_id);
+CREATE INDEX IF NOT EXISTS taxon_parent_id_idx ON sapin.taxon (parent_id);
 
-CREATE INDEX IF NOT EXISTS taxon_taxon_rank_idx ON sapin.taxon (taxon_rank);
+CREATE INDEX IF NOT EXISTS taxon_rank_idx ON sapin.taxon (rank);
 
 CREATE INDEX IF NOT EXISTS taxon_tree_path_idx ON sapin.taxon USING GIST (tree_path);
 
 CREATE TABLE IF NOT EXISTS
   sapin.taxon_scientific_name (
-    taxon_name_id serial PRIMARY KEY,
-    taxon_id integer REFERENCES sapin.taxon (taxon_id) NOT NULL,
-    src_taxon_name_id text NOT NULL,
+    id serial PRIMARY KEY,
+    taxon_id integer REFERENCES sapin.taxon (id) NOT NULL,
+    src_id text NOT NULL,
+    rank sapin.taxon_rank_enum NOT NULL,
     taxonomic_status sapin.taxonomic_status_enum NOT NULL,
-    scientific_name text NOT NULL,
-    accepted_name_id integer REFERENCES sapin.taxon_scientific_name (taxon_name_id),
-    original_name_id integer REFERENCES sapin.taxon_scientific_name (taxon_name_id),
+    name text NOT NULL,
+    accepted_name_id integer REFERENCES sapin.taxon_scientific_name (id),
+    original_name_id integer REFERENCES sapin.taxon_scientific_name (id),
     canonical_name text,
-    scientific_name_authorship text,
+    authorship text,
     generic_name text,
     specific_epithet text,
     infraspecific_epithet text,
     name_published_in text,
-    UNIQUE (scientific_name)
+    UNIQUE (name)
   );
 
 CREATE INDEX IF NOT EXISTS taxon_scientific_name_taxon_id_idx ON sapin.taxon_scientific_name (taxon_id);
 
-CREATE UNIQUE INDEX IF NOT EXISTS taxon_scientific_name_src_taxon_name_id_idx ON sapin.taxon_scientific_name (src_taxon_name_id);
+CREATE UNIQUE INDEX IF NOT EXISTS taxon_scientific_name_src_id_idx ON sapin.taxon_scientific_name (src_id);
 
 CREATE INDEX IF NOT EXISTS taxon_scientific_name_taxonomic_status_idx ON sapin.taxon_scientific_name (taxonomic_status);
 
-CREATE INDEX IF NOT EXISTS taxon_scientific_name_trgm_idx ON sapin.taxon_scientific_name USING GIST (scientific_name gist_trgm_ops);
+CREATE INDEX IF NOT EXISTS taxon_scientific_name_trgm_idx ON sapin.taxon_scientific_name USING GIST (name gist_trgm_ops);
+
+CREATE INDEX IF NOT EXISTS taxon_scientific_name_rank_idx ON sapin.taxon_scientific_name (rank);
 
 CREATE TABLE IF NOT EXISTS
   sapin.taxon_vernacular_name (
-    taxon_id integer references sapin.taxon (taxon_id),
-    vernacular_name text NOT NULL,
+    taxon_id integer references sapin.taxon (id),
+    name text NOT NULL,
+    rank sapin.taxon_rank_enum NOT NULL,
     language varchar(2),
     PRIMARY KEY (taxon_id, language),
-    UNIQUE (taxon_id, vernacular_name)
+    UNIQUE (taxon_id, name)
   );
 
-CREATE INDEX IF NOT EXISTS taxon_vernacular_name_trgm_idx ON sapin.taxon_vernacular_name USING GIST (vernacular_name gist_trgm_ops);
+CREATE INDEX IF NOT EXISTS taxon_vernacular_name_trgm_idx ON sapin.taxon_vernacular_name USING GIST (name gist_trgm_ops);
+
+CREATE INDEX IF NOT EXISTS taxon_vernacular_name_rank_idx ON sapin.taxon_vernacular_name (rank);
 
 -- location data
 CREATE TABLE IF NOT EXISTS
   sapin.location (
-    loc_id serial PRIMARY KEY,
-    parent_loc_id integer REFERENCES sapin.location (loc_id),
+    id serial PRIMARY KEY,
+    parent_id integer REFERENCES sapin.location (id),
     level smallint NOT NULL CHECK (
       level > 0
       AND level < 4
@@ -112,7 +118,7 @@ CREATE INDEX IF NOT EXISTS location_tree_path_idx ON sapin.location USING GIST (
 
 CREATE TABLE IF NOT EXISTS
   sapin.location_taxon_asso (
-    loc_id integer REFERENCES sapin.location (loc_id),
-    taxon_id integer REFERENCES sapin.taxon (taxon_id),
+    loc_id integer REFERENCES sapin.location (id),
+    taxon_id integer REFERENCES sapin.taxon (id),
     PRIMARY KEY (loc_id, taxon_id)
   );

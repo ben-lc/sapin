@@ -1,50 +1,50 @@
 UPDATE sapin.location l1
 SET
-  parent_loc_id = (
+  parent_id = (
     SELECT
-      loc_id
+      id
     FROM
       sapin.location l2
     WHERE
-      l2.src_loc_id = l1.src_parent_loc_id
+      l2.src_id = l1.src_parent_id
   );
 
 UPDATE sapin.location t1
 SET
   tree_path = (
     SELECT
-      string_agg(t.loc_id::varchar, '.')::ltree
+      string_agg(t.id::varchar, '.')::ltree
     FROM
       (
         WITH RECURSIVE
-          loc_id_plus_parent (loc_id) AS (
+          id_plus_parent (id) AS (
             SELECT
-              loc_id,
-              parent_loc_id
+              id,
+              parent_id
             FROM
               sapin.location t2
             WHERE
-              t2.loc_id = t1.loc_id
+              t2.id = t1.id
             UNION
             SELECT
-              t3.loc_id,
-              t3.parent_loc_id
+              t3.id,
+              t3.parent_id
             FROM
               sapin.location t3
-              JOIN loc_id_plus_parent ch ON ch.parent_loc_id = t3.loc_id
+              JOIN id_plus_parent ch ON ch.parent_id = t3.id
           )
         SELECT
-          loc_id,
+          id,
           row_number() OVER () AS rnum
         FROM
-          loc_id_plus_parent
+          id_plus_parent
         ORDER BY
           rnum DESC
       ) t
   );
 
 ALTER TABLE sapin.location
-DROP COLUMN src_loc_id;
+DROP COLUMN src_id;
 
 ALTER TABLE sapin.location
-DROP COLUMN src_parent_loc_id;
+DROP COLUMN src_parent_id;

@@ -45,8 +45,8 @@
       )
       VALUES (
         (SELECT taxon_id
-         FROM sapin.tmp_taxon_id_src_taxon_name_id_asso
-         WHERE src_taxon_name_id = ?taxonID),
+         FROM sapin.tmp_taxon_id_src_id_asso
+         WHERE src_id = ?taxonID),
         ?locationID,
         to_tsvector('simple', ?locality),
         ?country,
@@ -63,7 +63,7 @@
         location_name_contains
       )
       VALUES (
-        ?loc_id::integer,
+        ?location_id::integer,
         ?location_id_in,
         ?location_name_contains
       )

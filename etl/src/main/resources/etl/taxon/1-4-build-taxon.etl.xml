@@ -24,24 +24,24 @@
 
   <query connection-id="db1">
     SELECT
-      src_taxon_name_id,
-      taxon_rank,
-      tsn.scientific_name
+      src_id,
+      ttsn.rank,
+      tsn.name
     FROM
-      sapin.tmp_taxon_scientific_name
-      JOIN sapin.taxon_scientific_name tsn USING (src_taxon_name_id)
+      sapin.tmp_taxon_scientific_name ttsn
+      JOIN sapin.taxon_scientific_name tsn USING (src_id)
     WHERE
       tsn.taxonomic_status != 'SYNONYM'
     <script connection-id="db2">
       INSERT INTO sapin.taxon (
-        src_taxon_name_id,
-        taxon_rank,
+        src_name_id,
+        rank,
         accepted_name
       )
       VALUES (
-        ?src_taxon_name_id,
-        upper(?taxon_rank)::sapin.taxon_rank_enum,
-        ?scientific_name
+        ?src_id,
+        upper(?rank)::sapin.taxon_rank_enum,
+        ?name
       )
     </script>
   </query>

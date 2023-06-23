@@ -41,7 +41,7 @@ flyway {
   user = "postgres"
   password = "postgres"
   schemas = arrayOf("sapin")
-  locations = arrayOf("filesystem:../src/main/resources/db/migration")
+  locations = arrayOf("filesystem:../application/src/main/resources/db/migration")
   cleanDisabled = false
 }
 

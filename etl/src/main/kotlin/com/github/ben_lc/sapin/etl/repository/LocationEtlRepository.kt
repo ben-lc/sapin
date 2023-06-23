@@ -19,7 +19,7 @@ class LocationEtlRepository(private val template: R2dbcEntityTemplate) {
       locations.collect {
         template.databaseClient
             .sql(
-                """INSERT INTO sapin.location (level, name, geom, level_local_name, level_local_name_en, iso_id, src_loc_id, src_parent_loc_id)
+                """INSERT INTO sapin.location (level, name, geom, level_local_name, level_local_name_en, iso_id, src_id, src_parent_id)
                    VALUES ($1, $2, ST_GeomFromText($3, $4), $5, $6, $7, $8, $9)""")
             .bind(0, it.level)
             .bind(1, it.name)
@@ -39,8 +39,8 @@ class LocationEtlRepository(private val template: R2dbcEntityTemplate) {
           .selectOne(
               query(Criteria.where("name").`is`(name))
                   .columns(
-                      "loc_id",
-                      "parent_loc_id",
+                      "id",
+                      "parent_id",
                       "level",
                       "level_local_name",
                       "level_local_name_en",
