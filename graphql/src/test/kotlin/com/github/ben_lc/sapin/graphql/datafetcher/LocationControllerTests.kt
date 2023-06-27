@@ -106,12 +106,12 @@ class LocationControllerTests {
   }
 
   @Test
-  fun `paren should returns batched list of parent`() {
+  fun `parent should returns list of parents for given collection of location`() {
     coEvery { locationRepo.findAllBySimilarName("fr", 1) } returns
         flowOf(
             LocationEntity(id = 7, name = "Bretagne", level = 2, parentId = 3),
             LocationEntity(id = 9, name = "Lazio", level = 2, parentId = 1))
-    coEvery { locationRepo.findAllById(listOf(3, 1)) } returns
+    coEvery { locationRepo.findAllByIdIn(listOf(3, 1)) } returns
         flowOf(
             LocationEntity(id = 3, name = "France", level = 1),
             LocationEntity(id = 1, name = "Italy", level = 1))

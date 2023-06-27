@@ -9,7 +9,7 @@ data class Location(
     val isoId: String? = null,
     val levelLocalName: String? = null,
     val levelLocalNameEn: String? = null,
-    val parentId: Int? = null
+    val parentId: String? = null
 ) {
   constructor(
       location: LocationEntity
@@ -20,5 +20,5 @@ data class Location(
       location.isoId,
       location.levelLocalName,
       location.levelLocalNameEn,
-      location.parentId)
+      location.parentId?.toString())
 }

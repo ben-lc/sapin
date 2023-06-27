@@ -4,13 +4,25 @@ type Query {
     name: String!
     level: Int!
     limit: Int = 10
-  ): [Location]
+  ): [Location!]
   locationsByGeolocation(
     longitude: Float!
     latitude: Float!
     level: Int
-  ): [Location]
+  ): [Location!]
+
+  taxonById(id: ID!): Taxon
+  taxaByIds(ids: [ID!]!): [Taxon!]
+  searchTaxonNames(
+    name: String!
+    rank: TaxonRank
+    gteRank: TaxonRank
+    includeScientificName: Boolean = true
+    includeVernacularNameLang: String
+    limit: Int = 10
+  ): [TaxonName!]
 }
+
 type Location {
   id: ID!
   name: String!
@@ -19,6 +31,57 @@ type Location {
   levelLocalName: String
   levelLocalNameEn: String
   parent: Location
-  parents: [Location]
-  children: [Location]
+  parents: [Location!]
+  children: [Location!]
+}
+
+enum TaxonRank {
+  KINGDOM
+  PHYLUM
+  CLASS
+  ORDER
+  FAMILY
+  GENUS
+  SPECIES
+  SUBSPECIES
+  VARIETY
+  FORM
+}
+
+enum TaxonomicStatus {
+  ACCEPTED
+  DOUBTFUL
+  SYNONYM
+}
+
+type Taxon {
+  id: ID!
+  srcNameId: String!
+  rank: TaxonRank!
+  acceptedName: String!
+  scientificNames: [TaxonScientificName!]!
+  vernacularNames: [TaxonVernacularName!]
+  parent: Taxon
+  parents: [Taxon!]
+  children: [Taxon!]
+}
+
+interface TaxonName {
+  name: String!
+  taxon: Taxon!
+}
+
+type TaxonScientificName implements TaxonName {
+  id: ID!
+  name: String!
+  srcId: String!
+  taxon: Taxon!
+  taxonomicStatus: TaxonomicStatus!
+  acceptedName: TaxonScientificName
+}
+
+type TaxonVernacularName implements TaxonName {
+  name: String!
+  taxon: Taxon!
+  language: String!
 }

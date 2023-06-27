@@ -21,21 +21,21 @@
 
   <query connection-id="csv_taxon">
     <!-- Filter for GBIF backbone taxonomic data: excludes all names with "unranked" taxonRank -->
-    ,,,,,,,,,,,^(?!unranked).*$,,,,,,Animalia|Plantae|Fungi
+    ,,,,,,,,,,,^(?!unranked).*$,,,,,,Animalia|Plantae|Fungi|Chromista
     <script connection-id="db">
       INSERT INTO sapin.tmp_taxon_scientific_name (
-        src_taxon_name_id,
+        src_id,
         taxonomic_status,
-        scientific_name,
+        name,
         canonical_name,
-        scientific_name_authorship,
+        authorship,
         generic_name,
         specific_epithet,
         infraspecific_epithet,
         name_published_in,
         src_accepted_name_id,
-        src_parent_name_id,
-        taxon_rank
+        src_parent_id,
+        rank
       )
       VALUES (
         ?taxonID,
@@ -49,7 +49,6 @@
         ?infraspecificEpithet,
         ?namePublishedIn,
         ?acceptedNameUsageID,
-        ?originalNameUsageID,
         ?parentNameUsageID,
         upper(?taxonRank)::sapin.taxon_rank_enum
       )

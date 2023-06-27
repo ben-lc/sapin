@@ -4,6 +4,7 @@ import com.github.ben_lc.sapin.model.LocationEntity
 import io.r2dbc.spi.Row
 import io.r2dbc.spi.RowMetadata
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 import org.springframework.r2dbc.core.DatabaseClient
 import org.springframework.r2dbc.core.awaitSingleOrNull
 import org.springframework.r2dbc.core.flow
@@ -16,56 +17,40 @@ class LocationRepository(private val databaseClient: DatabaseClient) {
       databaseClient
           .sql(
               """
-                SELECT
-                  loc_id,
-                  parent_loc_id,
-                  level,
-                  name,
-                  iso_id,
-                  level_local_name,
-                  level_local_name_en
-                FROM
-                  sapin.location
-                WHERE
-                  loc_id = :id
-                  """)
+              SELECT
+                $SELECT_COLS
+              FROM
+                sapin.location
+              WHERE
+                id = :id
+                """)
           .bind("id", id)
           .map(MAPPER)
           .awaitSingleOrNull()
 
-  suspend fun findAllById(ids: Collection<Int>): Flow<LocationEntity> =
-      databaseClient
-          .sql(
-              """
-              SELECT
-                loc_id,
-                parent_loc_id,
-                level,
-                name,
-                iso_id,
-                level_local_name,
-                level_local_name_en
-              FROM
-                sapin.location
-              WHERE
-                loc_id IN (:ids)
-                """)
-          .bind("ids", ids)
-          .map(MAPPER)
-          .flow()
+  suspend fun findAllByIdIn(ids: Collection<Int>): Flow<LocationEntity> =
+      if (ids.isEmpty()) emptyFlow()
+      else
+          databaseClient
+              .sql(
+                  """
+                  SELECT
+                    $SELECT_COLS
+                  FROM
+                    sapin.location
+                  WHERE
+                    id IN (:ids)
+                    """)
+              .bind("ids", ids)
+              .map(MAPPER)
+              .flow()
   suspend fun findAllBySimilarName(name: String, level: Int, size: Int = 10): Flow<LocationEntity> =
       databaseClient
           .sql(
               """
               SELECT
                 name <-> :name AS dist,
-                loc_id,
-                parent_loc_id,
-                level,
-                name,
-                iso_id,
-                level_local_name,
-                level_local_name_en
+                $SELECT_COLS
               FROM
                 sapin.location
               WHERE
@@ -86,13 +71,7 @@ class LocationRepository(private val databaseClient: DatabaseClient) {
           .sql(
               """
               SELECT
-                loc_id,
-                parent_loc_id,
-                level,
-                name,
-                iso_id,
-                level_local_name,
-                level_local_name_en
+                $SELECT_COLS
               FROM
                 sapin.location
               WHERE
@@ -112,13 +91,7 @@ class LocationRepository(private val databaseClient: DatabaseClient) {
           .sql(
               """
               SELECT
-                loc_id,
-                parent_loc_id,
-                level,
-                name,
-                iso_id,
-                level_local_name,
-                level_local_name_en
+                $SELECT_COLS
               FROM
                 sapin.location
               WHERE
@@ -136,18 +109,12 @@ class LocationRepository(private val databaseClient: DatabaseClient) {
           .sql(
               """
               SELECT
-                loc_id,
-                parent_loc_id,
-                level,
-                name,
-                iso_id,
-                level_local_name,
-                level_local_name_en
+                $SELECT_COLS
               FROM
                 sapin.location
               WHERE
-                tree_path @> (SELECT tree_path FROM sapin.location WHERE loc_id = :id)
-                AND loc_id != :id
+                tree_path @> (SELECT tree_path FROM sapin.location WHERE id = :id)
+                AND id != :id
               ORDER BY level
               """)
           .bind("id", id)
@@ -155,34 +122,41 @@ class LocationRepository(private val databaseClient: DatabaseClient) {
           .flow()
 
   suspend fun findChildrenByIdIn(ids: Collection<Int>): Flow<LocationEntity> =
-      databaseClient
-          .sql(
-              """
-              SELECT
-                loc_id,
-                parent_loc_id,
-                level,
-                name,
-                iso_id,
-                level_local_name,
-                level_local_name_en
-              FROM
-                sapin.location
-              WHERE
-                parent_loc_id IN (:ids)
-                """)
-          .bind("ids", ids)
-          .map(MAPPER)
-          .flow()
+      if (ids.isEmpty()) emptyFlow()
+      else
+          databaseClient
+              .sql(
+                  """
+                  SELECT
+                    $SELECT_COLS
+                  FROM
+                    sapin.location
+                  WHERE
+                    parent_id IN (:ids)
+                    """)
+              .bind("ids", ids)
+              .map(MAPPER)
+              .flow()
 }
 
-val MAPPER: (Row, RowMetadata) -> LocationEntity = { row, _ ->
+private val MAPPER: (Row, RowMetadata) -> LocationEntity = { row, _ ->
   LocationEntity(
-      id = row.get("loc_id") as Int,
-      parentId = row.get("parent_loc_id") as Int?,
+      id = row.get("id") as Int,
+      parentId = row.get("parent_id") as Int?,
       name = row.get("name") as String,
       level = row.get("level") as Short,
       isoId = row.get("iso_id") as String?,
       levelLocalName = row.get("level_local_name") as String?,
       levelLocalNameEn = row.get("level_local_name_en") as String?)
 }
+
+private const val SELECT_COLS =
+    """
+  id,
+  parent_id,
+  level,
+  name,
+  iso_id,
+  level_local_name,
+  level_local_name_en
+"""

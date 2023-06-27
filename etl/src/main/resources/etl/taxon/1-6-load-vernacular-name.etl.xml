@@ -26,16 +26,22 @@
     <script connection-id="db">
       INSERT INTO sapin.taxon_vernacular_name (
         taxon_id,
-        vernacular_name,
-        language
+        name,
+        language,
+        rank
       )
-      VALUES (
-        (SELECT taxon_id
-         FROM sapin.tmp_taxon_id_src_taxon_name_id_asso
-         WHERE src_taxon_name_id = ?taxonID),
-        ?vernacularName,
-        coalesce(?language, '_')
-      ) ON CONFLICT DO NOTHING
+      SELECT
+        taxon_id,
+        name,
+        language,
+        rank
+      FROM (
+        SELECT taxon_id, ?vernacularName, coalesce(?language, '_'), rank
+        FROM sapin.tmp_taxon_id_src_id_asso
+        WHERE src_id = ?taxonID
+      ) v (taxon_id, name, language, rank)
+      WHERE taxon_id IS NOT NULL
+      ON CONFLICT DO NOTHING
     </script>
   </query>
 </etl>
