@@ -4,6 +4,7 @@ import com.github.ben_lc.sapin.model.LocationEntity
 import io.r2dbc.spi.Row
 import io.r2dbc.spi.RowMetadata
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 import org.springframework.r2dbc.core.DatabaseClient
 import org.springframework.r2dbc.core.awaitSingleOrNull
 import org.springframework.r2dbc.core.flow
@@ -16,31 +17,33 @@ class LocationRepository(private val databaseClient: DatabaseClient) {
       databaseClient
           .sql(
               """
-                SELECT
-                  $SELECT_COLS
-                FROM
-                  sapin.location
-                WHERE
-                  id = :id
-                  """)
-          .bind("id", id)
-          .map(MAPPER)
-          .awaitSingleOrNull()
-
-  suspend fun findAllById(ids: Collection<Int>): Flow<LocationEntity> =
-      databaseClient
-          .sql(
-              """
               SELECT
                 $SELECT_COLS
               FROM
                 sapin.location
               WHERE
-                id IN (:ids)
+                id = :id
                 """)
-          .bind("ids", ids)
+          .bind("id", id)
           .map(MAPPER)
-          .flow()
+          .awaitSingleOrNull()
+
+  suspend fun findAllByIdIn(ids: Collection<Int>): Flow<LocationEntity> =
+      if (ids.isEmpty()) emptyFlow()
+      else
+          databaseClient
+              .sql(
+                  """
+                  SELECT
+                    $SELECT_COLS
+                  FROM
+                    sapin.location
+                  WHERE
+                    id IN (:ids)
+                    """)
+              .bind("ids", ids)
+              .map(MAPPER)
+              .flow()
   suspend fun findAllBySimilarName(name: String, level: Int, size: Int = 10): Flow<LocationEntity> =
       databaseClient
           .sql(
@@ -119,19 +122,21 @@ class LocationRepository(private val databaseClient: DatabaseClient) {
           .flow()
 
   suspend fun findChildrenByIdIn(ids: Collection<Int>): Flow<LocationEntity> =
-      databaseClient
-          .sql(
-              """
-              SELECT
-                $SELECT_COLS
-              FROM
-                sapin.location
-              WHERE
-                parent_id IN (:ids)
-                """)
-          .bind("ids", ids)
-          .map(MAPPER)
-          .flow()
+      if (ids.isEmpty()) emptyFlow()
+      else
+          databaseClient
+              .sql(
+                  """
+                  SELECT
+                    $SELECT_COLS
+                  FROM
+                    sapin.location
+                  WHERE
+                    parent_id IN (:ids)
+                    """)
+              .bind("ids", ids)
+              .map(MAPPER)
+              .flow()
 }
 
 private val MAPPER: (Row, RowMetadata) -> LocationEntity = { row, _ ->
@@ -145,7 +150,7 @@ private val MAPPER: (Row, RowMetadata) -> LocationEntity = { row, _ ->
       levelLocalNameEn = row.get("level_local_name_en") as String?)
 }
 
-private val SELECT_COLS =
+private const val SELECT_COLS =
     """
   id,
   parent_id,
@@ -155,4 +160,3 @@ private val SELECT_COLS =
   level_local_name,
   level_local_name_en
 """
-        .trimIndent()

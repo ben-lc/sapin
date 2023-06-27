@@ -2,6 +2,7 @@ package com.github.ben_lc.sapin.graphql.datafetcher
 
 import com.github.ben_lc.sapin.graphql.type.Location
 import com.github.ben_lc.sapin.repository.LocationRepository
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.reactor.asFlux
@@ -51,21 +52,21 @@ class LocationController(private val locationRepo: LocationRepository) {
       locationRepo
           .findChildrenByIdIn(locations.map { it.id.toInt() })
           .toList()
-          .groupBy({ children -> locations.first { it.id == children.parentId.toString() } }) {
+          .groupBy({ child -> locations.first { it.id == child.parentId.toString() } }) {
             Location(it)
           }
           .toMono()
 
   @BatchMapping
-  suspend fun parent(locations: List<Location>): Mono<Map<Location, Location>> {
+  suspend fun parent(locations: List<Location>): Mono<Map<Location, Location?>> {
     val parents =
-        locationRepo
-            .findAllById(locations.filter { it.parentId != null }.map { it.parentId!!.toInt() })
-            .map { Location(it) }
-            .toList()
+        locationRepo.findAllByIdIn(
+            locations.filter { it.parentId != null }.map { it.parentId!!.toInt() })
 
     return locations
-        .associateWith { child -> parents.first { it.id.toInt() == child.parentId } }
+        .associateWith { child ->
+          parents.firstOrNull { it.id.toString() == child.parentId }?.let { Location(it) }
+        }
         .toMono()
   }
   @SchemaMapping

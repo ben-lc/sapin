@@ -97,7 +97,7 @@ class LocationRepositoryTests {
 
   @Test
   fun `findAllById should return list of locations matching ids`(): Unit = runBlocking {
-    assertThat(locationRepo.findAllById(listOf(3, 1)).toList())
+    assertThat(locationRepo.findAllByIdIn(listOf(3, 1)).toList())
         .containsExactlyInAnyOrder(
             LocationEntity(id = 3, name = "France", level = 1, isoId = "FRA"),
             LocationEntity(id = 1, name = "Italy", level = 1, isoId = "ITA"))
