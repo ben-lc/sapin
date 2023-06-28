@@ -1,5 +1,6 @@
-name: Run Gradle on PRs
-on: pull_request
+name: Run Gradle on push
+on:
+  push:
 jobs:
   gradle:
     strategy:
@@ -11,10 +12,11 @@ jobs:
       - uses: graalvm/setup-graalvm@v1
         with:
           version: 'latest'
-          java-version: 17
+          java-version: '17'
+          distribution: 'graalvm-community'
           components: 'native-image'
           github-token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Setup and execute Gradle 'test' task
+      - name: Setup and execute Gradle 'build' task
         uses: gradle/gradle-build-action@v2
         with:
           arguments: build
