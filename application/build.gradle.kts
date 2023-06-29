@@ -1,5 +1,3 @@
-import org.springframework.boot.gradle.tasks.bundling.BootBuildImage
-
 plugins {
   id("org.graalvm.buildtools.native") version "0.9.22"
   id("org.springframework.boot")
@@ -32,8 +30,4 @@ dependencies {
   testImplementation("org.springframework.security:spring-security-test")
   testImplementation("org.testcontainers:junit-jupiter")
   testImplementation("org.testcontainers:postgresql")
-}
-
-tasks.named<BootBuildImage>("bootBuildImage") {
-  imageName.set("${rootProject.name}:${project.version}")
 }

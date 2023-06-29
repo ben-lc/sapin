@@ -1,8 +1,7 @@
-name: Run Gradle on push
-on:
-  push:
+name: Build
+on: [push]
 jobs:
-  gradle:
+  build:
     strategy:
       matrix:
         os: [ubuntu-latest]
