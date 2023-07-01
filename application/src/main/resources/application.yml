@@ -1,6 +1,11 @@
 spring:
+  application:
+    name: sapin
   profiles:
     active: dev
+  graphql:
+    graphiql:
+      enabled: true
 
 ---
 spring:
