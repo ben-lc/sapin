@@ -1,0 +1,32 @@
+name: Create and publish a Docker image
+on:
+  workflow_run:
+    workflows: ["Build"]
+    types: [completed]
+    branches:
+      - 'main'
+jobs:
+  build-and-push-docker-image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Log in to the Container registry
+        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      - name: Set DOCKER_IMAGE environment variable
+        run: echo "DOCKER_IMAGE=ghcr.io/$GITHUB_REPOSITORY:$(gradle :application:currentVersion -q -Prelease.quiet)" >> "$GITHUB_ENV"
+      - name: Build docker image
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: :application:bootBuildImage --imageName ${{ env.DOCKER_IMAGE }}
+      - name: Push docker image to github packages
+        run: docker push ${{ env.DOCKER_IMAGE }}
+
+
