@@ -49,8 +49,8 @@ class EtlCommand(
               level = 2,
               isoIdColumn = "ISO_1",
               nameColumn = "NAME_1",
-              levelLocalName = "TYPE_1",
-              levelLocalNameEn = "ENGTYPE_1",
+              levelName = "TYPE_1",
+              levelNameEn = "ENGTYPE_1",
               srcId = "GID_1",
               srcParentId = "GID_0"))
     }

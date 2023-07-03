@@ -39,8 +39,8 @@ class GeopackageService(val locationRepo: LocationEtlRepository) {
                     level = props.level,
                     name = feature.getAttribute<String>(props.nameColumn)!!,
                     isoId = feature.getAttributeOrNullForValue<String>(props.isoIdColumn, "NA"),
-                    levelLocalName = feature.getAttribute<String>(props.levelLocalName),
-                    levelLocalNameEn = feature.getAttribute<String>(props.levelLocalNameEn),
+                    levelName = feature.getAttribute<String>(props.levelName),
+                    levelNameEn = feature.getAttribute<String>(props.levelNameEn),
                     geom = geom.toText(),
                     srid = geom.srid,
                     srcId = feature.getAttribute<String>(props.srcId)!!,
@@ -61,8 +61,8 @@ class GeopackageService(val locationRepo: LocationEtlRepository) {
       val isoIdColumn: String? = null,
       val nameColumn: String,
       val level: Int,
-      val levelLocalName: String? = null,
-      val levelLocalNameEn: String? = null,
+      val levelName: String? = null,
+      val levelNameEn: String? = null,
       val srcId: String,
       val srcParentId: String? = null
   )

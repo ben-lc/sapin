@@ -28,8 +28,8 @@ type Location {
   name: String!
   isoId: String
   level: Int!
-  levelLocalName: String
-  levelLocalNameEn: String
+  levelName: String
+  levelNameEn: String
   parent: Location
   parents: [Location!]
   children: [Location!]

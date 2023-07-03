@@ -18,10 +18,13 @@ CREATE TABLE IF NOT EXISTS
   sapin.location (
     id serial PRIMARY KEY,
     parent_id integer REFERENCES sapin.location (id),
-    level smallint NOT NULL CHECK (level > 0 AND level < 4),
+    level smallint NOT NULL CHECK (
+      level > 0
+      AND level < 4
+    ),
     name text NOT NULL,
-    level_local_name text,
-    level_local_name_en text,
+    level_name text,
+    level_name_en text,
     iso_id text,
     parent_iso_id text,
     geom geometry NOT NULL,

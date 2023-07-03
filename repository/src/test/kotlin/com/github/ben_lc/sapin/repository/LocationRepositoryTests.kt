@@ -46,16 +46,16 @@ class LocationRepositoryTests {
                 name = "Nouvelle-Aquitaine",
                 level = 2,
                 isoId = "FR-NAQ",
-                levelLocalName = "Région",
-                levelLocalNameEn = "Region"),
+                levelName = "Région",
+                levelNameEn = "Region"),
             LocationEntity(
                 id = 5,
                 parentId = 4,
                 name = "Gironde",
                 level = 3,
                 isoId = "FR-33",
-                levelLocalName = "Département",
-                levelLocalNameEn = "Department"))
+                levelName = "Département",
+                levelNameEn = "Department"))
   }
   @Test
   fun `findByGeolocationAndLevel should return locations based on coordinates and level`(): Unit =
@@ -71,8 +71,8 @@ class LocationRepositoryTests {
                     name = "Nouvelle-Aquitaine",
                     level = 2,
                     isoId = "FR-NAQ",
-                    levelLocalName = "Région",
-                    levelLocalNameEn = "Region"))
+                    levelName = "Région",
+                    levelNameEn = "Region"))
       }
 
   @Test
@@ -85,8 +85,8 @@ class LocationRepositoryTests {
                 name = "Nouvelle-Aquitaine",
                 level = 2,
                 isoId = "FR-NAQ",
-                levelLocalName = "Région",
-                levelLocalNameEn = "Region"))
+                levelName = "Région",
+                levelNameEn = "Region"))
   }
 
   @Test
