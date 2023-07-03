@@ -146,8 +146,8 @@ private val MAPPER: (Row, RowMetadata) -> LocationEntity = { row, _ ->
       name = row.get("name") as String,
       level = row.get("level") as Short,
       isoId = row.get("iso_id") as String?,
-      levelLocalName = row.get("level_local_name") as String?,
-      levelLocalNameEn = row.get("level_local_name_en") as String?)
+      levelName = row.get("level_name") as String?,
+      levelNameEn = row.get("level_name_en") as String?)
 }
 
 private const val SELECT_COLS =
@@ -157,6 +157,6 @@ private const val SELECT_COLS =
   level,
   name,
   iso_id,
-  level_local_name,
-  level_local_name_en
+  level_name,
+  level_name_en
 """

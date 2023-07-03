@@ -59,8 +59,8 @@ class LocationEtlRepositoryTests {
             name = "Bretagne",
             level = 2,
             isoId = "FR-BRE",
-            levelLocalNameEn = "Region",
-            levelLocalName = "Région",
+            levelNameEn = "Region",
+            levelName = "Région",
             srcId = "FR.2",
             geom = "POLYGON ((10 30, 30 30, 30 10, 10 10, 10 30))",
             srid = 4326)
@@ -69,8 +69,8 @@ class LocationEtlRepositoryTests {
             name = "Bourgogne-Franche-Comté",
             level = 2,
             isoId = "FR-BFC",
-            levelLocalNameEn = "Region",
-            levelLocalName = "Région",
+            levelNameEn = "Region",
+            levelName = "Région",
             srcId = "FR.3",
             geom = "POLYGON ((10 30, 30 30, 30 10, 10 10, 10 30))",
             srid = 4326)
@@ -83,8 +83,8 @@ class LocationEtlRepositoryTests {
                 name = "Bretagne",
                 level = 2,
                 isoId = "FR-BRE",
-                levelLocalNameEn = "Region",
-                levelLocalName = "Région"))
+                levelNameEn = "Region",
+                levelName = "Région"))
 
     assertThat(locationRepo.findByName("Bourgogne-Franche-Comté"))
         .usingRecursiveComparison()
@@ -94,8 +94,8 @@ class LocationEtlRepositoryTests {
                 name = "Bourgogne-Franche-Comté",
                 level = 2,
                 isoId = "FR-BFC",
-                levelLocalNameEn = "Region",
-                levelLocalName = "Région"))
+                levelNameEn = "Region",
+                levelName = "Région"))
   }
 
   @Test
@@ -109,8 +109,8 @@ class LocationEtlRepositoryTests {
                 id = 4,
                 name = "Nouvelle-Aquitaine",
                 level = 2,
-                levelLocalName = "Région",
-                levelLocalNameEn = "Region",
+                levelName = "Région",
+                levelNameEn = "Region",
                 isoId = "FR-NAQ"))
   }
 }

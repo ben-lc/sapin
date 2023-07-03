@@ -19,14 +19,14 @@ class LocationEtlRepository(private val template: R2dbcEntityTemplate) {
       locations.collect {
         template.databaseClient
             .sql(
-                """INSERT INTO sapin.location (level, name, geom, level_local_name, level_local_name_en, iso_id, src_id, src_parent_id)
+                """INSERT INTO sapin.location (level, name, geom, level_name, level_name_en, iso_id, src_id, src_parent_id)
                    VALUES ($1, $2, ST_GeomFromText($3, $4), $5, $6, $7, $8, $9)""")
             .bind(0, it.level)
             .bind(1, it.name)
             .bind(2, it.geom!!)
             .bind(3, it.srid!!)
-            .bindNullable<String>(4, it.levelLocalName)
-            .bindNullable<String>(5, it.levelLocalNameEn)
+            .bindNullable<String>(4, it.levelName)
+            .bindNullable<String>(5, it.levelNameEn)
             .bindNullable<String>(6, it.isoId)
             .bindNullable<String>(7, it.srcId)
             .bindNullable<String>(8, it.srcParentId)
@@ -39,13 +39,7 @@ class LocationEtlRepository(private val template: R2dbcEntityTemplate) {
           .selectOne(
               query(Criteria.where("name").`is`(name))
                   .columns(
-                      "id",
-                      "parent_id",
-                      "level",
-                      "level_local_name",
-                      "level_local_name_en",
-                      "name",
-                      "iso_id"),
+                      "id", "parent_id", "level", "level_name", "level_name_en", "name", "iso_id"),
               LocationEtl::class.java)
           .awaitSingleOrNull()
 }

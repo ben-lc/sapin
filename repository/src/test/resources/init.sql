@@ -100,8 +100,8 @@ CREATE TABLE IF NOT EXISTS
       AND level < 4
     ),
     name text NOT NULL,
-    level_local_name text,
-    level_local_name_en text,
+    level_name text,
+    level_name_en text,
     iso_id text,
     geom geometry NOT NULL,
     tree_path ltree
