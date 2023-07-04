@@ -4,13 +4,7 @@ import com.github.ben_lc.sapin.etl.cli.EtlCommand
 import com.github.ben_lc.sapin.etl.service.GeopackageService
 import com.github.ben_lc.sapin.etl.service.ScriptellaService
 import com.ninjasquad.springmockk.MockkBean
-import io.mockk.Runs
-import io.mockk.coEvery
-import io.mockk.coVerify
-import io.mockk.every
-import io.mockk.just
-import io.mockk.verify
-import io.mockk.verifyOrder
+import io.mockk.*
 import java.io.File
 import kotlinx.coroutines.Job
 import org.junit.jupiter.api.Test
@@ -56,25 +50,25 @@ internal class EtlApplicationTests {
   @Test
   fun `Command line parameters for subcommand load-location should be parsed and call geopackageService#loadLocation`() {
     val expectedGeopkgProps =
-        arrayOf(
-            GeopackageService.LocationGpkgProps(
-                tableName = "ADM_0",
+        listOf(
+            LocationGeopackageProperties(
+                tableName = "TABLE_0",
                 level = 1,
-                isoIdColumnName = "GID_0",
-                nameColumnName = "COUNTRY",
-                srcIdColumnName = "GID_0"),
-            GeopackageService.LocationGpkgProps(
-                tableName = "ADM_1",
+                isoIdColumnName = "ID_COL",
+                nameColumnName = "NAME_COL",
+                srcIdColumnName = "CODE_COL"),
+            LocationGeopackageProperties(
+                tableName = "TABLE_1",
                 level = 2,
-                isoIdColumnName = "ISO_1",
-                nameColumnName = "NAME_1",
-                levelNameColumnName = "TYPE_1",
-                levelNameEnColumnName = "ENGTYPE_1",
-                srcIdColumnName = "GID_1",
-                srcParentIdColumnName = "GID_0"))
+                isoIdColumnName = "ID_COL2",
+                nameColumnName = "NAME_COL2",
+                levelNameColumnName = "LEVEL2",
+                levelNameEnColumnName = "LEVEL_EN2",
+                srcIdColumnName = "CODE_COL2",
+                srcParentIdColumnName = "CODE_COL"))
 
     every { scriptellaService.runEtl(any(), any()) } just Runs
-    coEvery { geopackageService.loadLocation(any(), any(), any()) } returns Job()
+    coEvery { geopackageService.loadLocation(any(), any()) } returns Job()
 
     CommandLine(etlCommand, factory).execute("load-location", "/that/folder/file.gpkg")
 
@@ -83,7 +77,7 @@ internal class EtlApplicationTests {
       scriptellaService.runEtl(match { it.endsWith("etl/location") }, "post-load.etl.xml", null)
     }
     coVerify(exactly = 1) {
-      geopackageService.loadLocation(File("/that/folder/file.gpkg"), *expectedGeopkgProps)
+      geopackageService.loadLocation(File("/that/folder/file.gpkg"), expectedGeopkgProps)
     }
   }
 }
