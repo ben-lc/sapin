@@ -1,17 +1,16 @@
+---
 spring:
   profiles:
-    active: dev
-
+    active: "dev"
 ---
 spring:
   config:
     activate:
-      on-profile: dev
+      on-profile: "dev"
   r2dbc:
-    url: r2dbc:postgresql://localhost:5432/db_sapin
-    username: postgres
-    password: postgres
-
+    url: "r2dbc:postgresql://localhost:5432/db_sapin"
+    username: "postgres"
+    password: "postgres"
 scriptella:
   config:
-    location: etl
+    location: "etl"
