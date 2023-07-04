@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.ExitCodeGenerator
 import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.runApplication
 import org.springframework.context.annotation.Import
 import picocli.CommandLine
@@ -15,6 +16,7 @@ import picocli.CommandLine.IFactory
 /** Spring boot cli tool app with picocli. */
 @SpringBootApplication
 @Import(R2dbcConfig::class, LocationEtlRepository::class)
+@EnableConfigurationProperties(EtlProperties::class)
 class EtlApplication
 @Autowired
 constructor(
