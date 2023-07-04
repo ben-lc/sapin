@@ -57,21 +57,21 @@ internal class EtlApplicationTests {
   fun `Command line parameters for subcommand load-location should be parsed and call geopackageService#loadLocation`() {
     val expectedGeopkgProps =
         arrayOf(
-            GeopackageService.GpkgProps(
+            GeopackageService.LocationGpkgProps(
                 tableName = "ADM_0",
                 level = 1,
-                isoIdColumn = "GID_0",
-                nameColumn = "COUNTRY",
-                srcId = "GID_0"),
-            GeopackageService.GpkgProps(
+                isoIdColumnName = "GID_0",
+                nameColumnName = "COUNTRY",
+                srcIdColumnName = "GID_0"),
+            GeopackageService.LocationGpkgProps(
                 tableName = "ADM_1",
                 level = 2,
-                isoIdColumn = "ISO_1",
-                nameColumn = "NAME_1",
-                levelName = "TYPE_1",
-                levelNameEn = "ENGTYPE_1",
-                srcId = "GID_1",
-                srcParentId = "GID_0"))
+                isoIdColumnName = "ISO_1",
+                nameColumnName = "NAME_1",
+                levelNameColumnName = "TYPE_1",
+                levelNameEnColumnName = "ENGTYPE_1",
+                srcIdColumnName = "GID_1",
+                srcParentIdColumnName = "GID_0"))
 
     every { scriptellaService.runEtl(any(), any()) } just Runs
     coEvery { geopackageService.loadLocation(any(), any(), any()) } returns Job()

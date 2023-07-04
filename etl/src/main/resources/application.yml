@@ -11,6 +11,7 @@ spring:
     url: "r2dbc:postgresql://localhost:5432/db_sapin"
     username: "postgres"
     password: "postgres"
-scriptella:
-  config:
-    location: "etl"
+etl:
+  scriptella:
+    config:
+      location: "etl"
