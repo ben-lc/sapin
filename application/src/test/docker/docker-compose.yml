@@ -1,17 +1,17 @@
+---
 version: "3.3"
 services:
   postgres:
     container_name: "pg_sapin"
     image: "postgis/postgis:15-3.3-alpine"
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=db_sapin
+    - "POSTGRES_USER=postgres"
+    - "POSTGRES_PASSWORD=postgres"
+    - "POSTGRES_DB=db_sapin"
     ports:
-      - "5432:5432"
+    - "5432:5432"
     volumes:
-      - pg_sapin_data:/var/lib/postgresql/data
-      - ./postgresql.conf:/etc/postgresql/postgresql.conf
-
+    - "pg_sapin_data:/var/lib/postgresql/data"
+    - "./postgresql.conf:/etc/postgresql/postgresql.conf"
 volumes:
-  pg_sapin_data:
+  pg_sapin_data: null
