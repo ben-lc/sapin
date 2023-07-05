@@ -2,6 +2,7 @@ package com.github.ben_lc.sapin.repository
 
 import com.github.ben_lc.sapin.model.TaxonEntity
 import com.github.ben_lc.sapin.model.TaxonScientificNameEntity
+import com.github.ben_lc.sapin.repository.config.R2dbcConfig
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions
