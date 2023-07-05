@@ -6,7 +6,7 @@ import io.r2dbc.spi.RowMetadata
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 import org.springframework.r2dbc.core.DatabaseClient
-import org.springframework.r2dbc.core.awaitSingleOrNull
+import org.springframework.r2dbc.core.awaitOneOrNull
 import org.springframework.r2dbc.core.flow
 import org.springframework.stereotype.Repository
 
@@ -26,7 +26,7 @@ class LocationRepository(private val databaseClient: DatabaseClient) {
                 """)
           .bind("id", id)
           .map(MAPPER)
-          .awaitSingleOrNull()
+          .awaitOneOrNull()
 
   suspend fun findAllByIdIn(ids: Collection<Int>): Flow<LocationEntity> =
       if (ids.isEmpty()) emptyFlow()

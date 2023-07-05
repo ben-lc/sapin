@@ -10,7 +10,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import org.geotools.data.DataStoreFinder
-import org.locationtech.jts.geom.MultiPolygon
+import org.locationtech.jts.geom.Geometry
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
@@ -35,7 +35,7 @@ class GeopackageService(val locationRepo: LocationEtlRepository) {
             val locations = flow {
               while (featureIterator.hasNext()) {
                 val feature = featureIterator.next()
-                val geom = (feature.defaultGeometry as MultiPolygon)
+                val geom = (feature.defaultGeometry as Geometry)
                 val location =
                     LocationEtl(
                         level = props.level,
