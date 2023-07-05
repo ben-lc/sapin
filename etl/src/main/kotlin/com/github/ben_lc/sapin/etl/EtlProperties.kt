@@ -32,7 +32,7 @@ data class GeopackageProperties(val location: List<LocationGeopackageProperties>
 data class LocationGeopackageProperties(
     val tableName: String,
     val nameColumnName: String,
-    val level: Int,
+    val level: Short,
     val srcIdColumnName: String,
     val isoIdColumnName: String? = null,
     val levelNameColumnName: String? = null,
