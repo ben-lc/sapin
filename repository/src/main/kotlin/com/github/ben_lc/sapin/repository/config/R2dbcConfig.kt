@@ -1,4 +1,4 @@
-package com.github.ben_lc.sapin.repository
+package com.github.ben_lc.sapin.repository.config
 
 import com.github.ben_lc.sapin.model.TaxonEntity
 import com.github.ben_lc.sapin.model.TaxonScientificNameEntity

@@ -2,7 +2,7 @@ package com.github.ben_lc.sapin.etl
 
 import com.github.ben_lc.sapin.etl.cli.EtlCommand
 import com.github.ben_lc.sapin.etl.repository.LocationEtlRepository
-import com.github.ben_lc.sapin.repository.R2dbcConfig
+import com.github.ben_lc.sapin.repository.config.R2dbcConfig
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.ExitCodeGenerator

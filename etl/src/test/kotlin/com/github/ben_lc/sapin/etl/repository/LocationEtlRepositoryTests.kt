@@ -1,7 +1,7 @@
 package com.github.ben_lc.sapin.etl.repository
 
 import com.github.ben_lc.sapin.etl.model.LocationEtl
-import com.github.ben_lc.sapin.repository.R2dbcConfig
+import com.github.ben_lc.sapin.repository.config.R2dbcConfig
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
