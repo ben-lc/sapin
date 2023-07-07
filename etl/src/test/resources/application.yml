@@ -24,3 +24,8 @@ etl:
         levelNameColumnName: "LEVEL2"
         levelNameEnColumnName: "LEVEL_EN2"
         srcParentIdColumnName: "CODE_COL"
+      naturalArea:
+      - tableName: "NaturaSite_polygon"
+        nameColumnName: "SITENAME"
+        srcIdColumnName: "SITECODE"
+        typeCode: "NATURA2000"

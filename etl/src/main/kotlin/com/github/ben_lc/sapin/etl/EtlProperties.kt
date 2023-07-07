@@ -13,7 +13,10 @@ data class ScriptellaConfigProperties(val location: Resource)
 
 data class LoadProperties(val geopackage: GeopackageProperties)
 
-data class GeopackageProperties(val location: List<LocationGeopackageProperties>)
+data class GeopackageProperties(
+    val location: List<LocationGeopackageProperties>?,
+    val naturalArea: List<NaturalAreaGeopackageProperties>?
+)
 
 /**
  * Properties of the location geopackage to load.
@@ -38,4 +41,24 @@ data class LocationGeopackageProperties(
     val levelNameColumnName: String? = null,
     val levelNameEnColumnName: String? = null,
     val srcParentIdColumnName: String? = null
+)
+
+/**
+ * Properties of the natural area geopackage to load.
+ *
+ * @property tableName the name of the geopackage table to load
+ * @property nameColumnName the table column name containing the name of areas
+ * @property srcIdColumnName the table column name containing unique id of source data
+ * @property typeCode the table column name containing the code of the natural area type of loaded
+ *   data
+ * @property descriptionColumnName the table column name containing the description of the area
+ * @property filter the CQL filter used to select geopackage data
+ */
+data class NaturalAreaGeopackageProperties(
+    val tableName: String,
+    val nameColumnName: String,
+    val srcIdColumnName: String,
+    val typeCode: String,
+    val descriptionColumnName: String?,
+    val filter: String?
 )
