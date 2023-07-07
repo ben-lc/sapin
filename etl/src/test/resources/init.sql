@@ -32,3 +32,24 @@ CREATE TABLE IF NOT EXISTS
     src_id text NOT NULL,
     src_parent_id text
   );
+
+CREATE TYPE sapin.natural_area_domain_enum AS ENUM('TERRESTRIAL', 'MARINE');
+
+CREATE TABLE IF NOT EXISTS
+  sapin.natural_area_type (
+    id serial PRIMARY KEY,
+    name text NOT NULL UNIQUE,
+    code text NOT NULL UNIQUE,
+    description text
+  );
+
+CREATE TABLE IF NOT EXISTS
+  sapin.natural_area (
+    id serial PRIMARY KEY,
+    name text NOT NULL,
+    domain sapin.natural_area_domain_enum NOT NULL,
+    src_id text NOT NULL,
+    type_id integer REFERENCES sapin.natural_area_type (id) NOT NULL,
+    description text,
+    geom geometry NOT NULL
+  );
