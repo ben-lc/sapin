@@ -1,0 +1,72 @@
+= SAPIN, an api to handle biodiversity data for upcoming Sacoche mobile app
+
+image:https://img.shields.io/badge/kotlin-%237F52FF.svg?style=for-the-badge&logo=kotlin&logoColor=white[Static Badge]
+image:https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white[Static Badge]
+image:https://img.shields.io/badge/-GraphQL-E10098?style=for-the-badge&logo=graphql&logoColor=white[Static Badge]
+image:https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white[Static Badge]
+
+== Objectives
+
+* Providing a query api of taxonomic data to load lists of species according to client location
+* Providing a mutation api to allow users to save occurrences on the server
+* Providing a query api of natural area data with geolocation to allow users to discover nearby natural areas
+* Doing all this following, if possible, biodiversity standards like Darwin Core
+
+== Gradle
+
+This project uses the build tool Gradle. It can be installed locally or automatically downloaded with gradle wrapper.
+Most of the commands to execute in this documentation are gradle-based.
+
+Gradle commands in this doc use gradle wrapper for linux i.e. `./gradlew ...` run from the root folder of this project. To use gradle wrapper on windows just use `gradlew.bat ...` instead.
+
+== Description of gradle modules
+
+=== *application*
+
+The main spring boot app (webflux based) running the server.
+
+Run `./gradlew :application:bootRun` to run the server.
+
+=== *etl*
+
+An independant spring boot app based on `picocli` providing a cli tool to load and extract the server data.
+
+Currently it supports loading of taxonomic and location data.
+
+Run `./gradlew :elt:bootRun --args=-h` to show usage.
+
+For example, run `./gradlew :elt:bootRun --args="load-location /path/to/location.gpkg"` to load a location geopackage.
+
+=== *graphql*
+
+This module contains `spring-graphql` controllers and code needed to manage the graphql api.
+
+=== *model*
+
+This module contains the data entities used by the project.
+
+=== *repository*
+
+This module contains all the repositories to interact with postgresql with `spring-data-r2dbc`.
+
+== Database setup
+
+=== For development
+
+1. Install docker and docker-compose
+
+2. Run `docker-compose -f application/src/test/docker/docker-compose.yml up -d`
+
+3. Run `./gradlew :etl:flywayMigrate`
+
+4. Download GADM data single GeoPackage format here https://gadm.org/download_world.html
+
+5. Run `./gradlew :etl:bootRun --args="load-location /path/to/gadm.gpkg`
+
+6. Download GBIF Backbone Taxonomy data with Darwin Core format here https://www.gbif.org/dataset/d7dddbf4-2cf0-4f39-9b2a-bb099caae36c
+
+7. Unzip files `Taxon.csv`, `VernacularName.tsv` and `Distribution.tsv` from the Darwin Core archive.
+
+8. Run `./gradlew :etl:bootRun --args="load-taxon /path/to/taxon"`
+
+
