@@ -5,7 +5,7 @@
   <connection
     id="csv_vernacular"
     driver="csv"
-    url="${csv.location}/taxon/VernacularName.tsv"
+    url="${csv.location}/VernacularName.tsv"
   >
     separator=\t
     encoding=UTF-8

@@ -16,15 +16,15 @@ CREATE TABLE IF NOT EXISTS
     rank sapin.taxon_rank_enum
   );
 
-CREATE INDEX tmp_taxon_scientific_name_name_idx ON sapin.tmp_taxon_scientific_name (name);
+CREATE INDEX IF NOT EXISTS tmp_taxon_scientific_name_name_idx ON sapin.tmp_taxon_scientific_name (name);
 
-CREATE INDEX tmp_taxon_scientific_name_src_parent_id_idx ON sapin.tmp_taxon_scientific_name (src_parent_id);
+CREATE INDEX IF NOT EXISTS tmp_taxon_scientific_name_src_parent_id_idx ON sapin.tmp_taxon_scientific_name (src_parent_id);
 
-CREATE INDEX tmp_taxon_scientific_name_accepted_name_id_idx ON sapin.tmp_taxon_scientific_name (accepted_name_id);
+CREATE INDEX IF NOT EXISTS tmp_taxon_scientific_name_accepted_name_id_idx ON sapin.tmp_taxon_scientific_name (accepted_name_id);
 
-CREATE UNIQUE INDEX taxon_scientific_name_name_idx ON sapin.taxon_scientific_name (name);
+CREATE UNIQUE INDEX IF NOT EXISTS taxon_scientific_name_name_idx ON sapin.taxon_scientific_name (name);
 
-CREATE UNIQUE INDEX taxon_accepted_name_idx ON sapin.taxon (accepted_name);
+CREATE UNIQUE INDEX IF NOT EXISTS taxon_accepted_name_idx ON sapin.taxon (accepted_name);
 
 -- delete table constraints during import
 ALTER TABLE sapin.taxon
@@ -39,10 +39,6 @@ DROP CONSTRAINT taxon_scientific_name_taxon_id_fkey;
 
 ALTER TABLE sapin.taxon_scientific_name
 DROP CONSTRAINT taxon_scientific_name_accepted_name_id_fkey;
-
-ALTER TABLE sapin.taxon_vernacular_name
-ALTER COLUMN taxon_id
-DROP NOT NULL;
 
 CREATE TABLE IF NOT EXISTS
   sapin.tmp_taxon_distribution (

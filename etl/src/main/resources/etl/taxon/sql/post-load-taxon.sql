@@ -15,7 +15,11 @@ SET
       ttsn2.taxonomic_status
     LIMIT
       1
-  );
+  )
+WHERE
+  parent_id IS NULL;
+
+COMMIT;
 
 -- set tree_path column by concatenation of id and its parent ones
 UPDATE sapin.taxon t1
@@ -50,7 +54,11 @@ SET
         ORDER BY
           rnum DESC
       ) t
-  );
+  )
+WHERE
+  tree_path IS NULL;
+
+COMMIT;
 
 -- set id column of taxon_scientific_name table
 UPDATE sapin.taxon_scientific_name tsn
@@ -66,7 +74,10 @@ SET
       ttsn1.src_id = tsn.src_id
   )
 WHERE
-  taxonomic_status = 'SYNONYM';
+  taxonomic_status = 'SYNONYM'
+  AND taxon_id IS NULL;
+
+COMMIT;
 
 UPDATE sapin.taxon_scientific_name tsn
 SET
@@ -79,22 +90,10 @@ SET
       tsn.src_id = t.src_name_id
   )
 WHERE
-  taxonomic_status != 'SYNONYM';
+  taxonomic_status != 'SYNONYM'
+  AND taxon_id IS NULL;
 
--- create temporary table to keep mapping between src_taxon_name_id and id
-CREATE TABLE
-  sapin.tmp_taxon_id_src_id_asso AS (
-    SELECT
-      taxon_id,
-      ttsn.src_id,
-      ttsn.rank
-    FROM
-      sapin.taxon_scientific_name
-      JOIN sapin.tmp_taxon_scientific_name ttsn USING (name)
-  );
-
-ALTER TABLE sapin.tmp_taxon_id_src_id_asso
-ADD PRIMARY KEY (src_id, taxon_id);
+COMMIT;
 
 -- set accepted name of taxon_scientific_name table
 UPDATE sapin.taxon_scientific_name tsn1
@@ -108,7 +107,28 @@ SET
       JOIN sapin.taxon_scientific_name tsn2 ON ttsn2.name = tsn2.name
     WHERE
       ttsn1.src_id = tsn1.src_id
+  )
+WHERE
+  accepted_name_id IS NULL;
+
+COMMIT;
+
+-- create temporary table to keep mapping between src_taxon_name_id and id
+CREATE TABLE IF NOT EXISTS
+  sapin.tmp_taxon_id_src_id_asso AS (
+    SELECT
+      taxon_id,
+      ttsn.src_id,
+      ttsn.rank
+    FROM
+      sapin.taxon_scientific_name
+      JOIN sapin.tmp_taxon_scientific_name ttsn USING (name)
   );
+
+ALTER TABLE sapin.tmp_taxon_id_src_id_asso
+ADD PRIMARY KEY (src_id, taxon_id);
+
+COMMIT;
 
 -- set back constraints on tables
 ALTER TABLE sapin.taxon

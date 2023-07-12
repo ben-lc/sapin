@@ -1,5 +1,5 @@
 -- delete temporary table and indexes
-DROP INDEX IF EXISTS sapin.taxon_scientific_name_scientific_name_idx;
+DROP INDEX IF EXISTS sapin.taxon_scientific_name_name_idx;
 
 DROP INDEX IF EXISTS sapin.taxon_accepted_name_idx;
 

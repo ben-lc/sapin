@@ -2,7 +2,7 @@
 <etl>
   <description>Imports source taxonomic data to a temporary table</description>
 
-  <connection id="csv_taxon" driver="csv" url="${csv.location}/taxon/Taxon.tsv">
+  <connection id="csv_taxon" driver="csv" url="${csv.location}/Taxon.tsv">
     <!-- CSV parsing config for GBIF backbone in TSV format -->
     separator=\t
     encoding=UTF-8

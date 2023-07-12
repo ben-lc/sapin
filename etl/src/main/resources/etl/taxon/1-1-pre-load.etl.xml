@@ -2,7 +2,7 @@
 <etl>
   <description>Run pre import of taxonomic data sql scripts</description>
 
-  <connection id="csv_taxon" driver="csv" url="${csv.location}/taxon/Taxon.tsv">
+  <connection id="csv_taxon" driver="csv" url="${csv.location}/Taxon.tsv">
     separator=\t
     encoding=UTF-8
     quote=
