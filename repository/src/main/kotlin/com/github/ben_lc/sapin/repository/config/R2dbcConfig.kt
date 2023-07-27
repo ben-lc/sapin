@@ -1,5 +1,6 @@
-package com.github.ben_lc.sapin.repository
+package com.github.ben_lc.sapin.repository.config
 
+import com.github.ben_lc.sapin.model.NaturalAreaEntity
 import com.github.ben_lc.sapin.model.TaxonEntity
 import com.github.ben_lc.sapin.model.TaxonScientificNameEntity
 import com.github.ben_lc.sapin.repository.util.TaxonRankConverter
@@ -36,6 +37,7 @@ class R2dbcConfig : AbstractR2dbcConfiguration() {
                     .withEnum(
                         "taxonomic_status_enum",
                         TaxonScientificNameEntity.TaxonomicStatus::class.java)
+                    .withEnum("natural_area_domain_enum", NaturalAreaEntity.Domain::class.java)
                     .build())
             .build())
   }

@@ -1,6 +1,7 @@
 package com.github.ben_lc.sapin.repository
 
 import com.github.ben_lc.sapin.model.LocationEntity
+import com.github.ben_lc.sapin.repository.config.R2dbcConfig
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
@@ -14,7 +15,7 @@ import org.springframework.test.context.jdbc.Sql
 @DataR2dbcTest
 @ContextConfiguration(initializers = [DatabaseContextInitializer::class])
 @Import(R2dbcConfig::class, LocationRepository::class)
-@Sql("location-data.sql")
+@Sql("load-location-data.sql")
 @Sql("clean-location-data.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 class LocationRepositoryTests {
 
@@ -46,16 +47,16 @@ class LocationRepositoryTests {
                 name = "Nouvelle-Aquitaine",
                 level = 2,
                 isoId = "FR-NAQ",
-                levelLocalName = "Région",
-                levelLocalNameEn = "Region"),
+                levelName = "Région",
+                levelNameEn = "Region"),
             LocationEntity(
                 id = 5,
                 parentId = 4,
                 name = "Gironde",
                 level = 3,
                 isoId = "FR-33",
-                levelLocalName = "Département",
-                levelLocalNameEn = "Department"))
+                levelName = "Département",
+                levelNameEn = "Department"))
   }
   @Test
   fun `findByGeolocationAndLevel should return locations based on coordinates and level`(): Unit =
@@ -71,8 +72,8 @@ class LocationRepositoryTests {
                     name = "Nouvelle-Aquitaine",
                     level = 2,
                     isoId = "FR-NAQ",
-                    levelLocalName = "Région",
-                    levelLocalNameEn = "Region"))
+                    levelName = "Région",
+                    levelNameEn = "Region"))
       }
 
   @Test
@@ -85,8 +86,8 @@ class LocationRepositoryTests {
                 name = "Nouvelle-Aquitaine",
                 level = 2,
                 isoId = "FR-NAQ",
-                levelLocalName = "Région",
-                levelLocalNameEn = "Region"))
+                levelName = "Région",
+                levelNameEn = "Region"))
   }
 
   @Test

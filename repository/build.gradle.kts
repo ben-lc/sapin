@@ -2,6 +2,7 @@ plugins {
   id("sapin.common-conventions")
   id("sapin.kotlin-conventions")
   id("sapin.spring-conventions")
+  id("sapin.sql-conventions")
 }
 
 repositories { mavenCentral() }

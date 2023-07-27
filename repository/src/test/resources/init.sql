@@ -35,9 +35,8 @@ CREATE TABLE IF NOT EXISTS
     src_name_id text NOT NULL,
     parent_id integer REFERENCES sapin.taxon (id),
     rank sapin.taxon_rank_enum NOT NULL,
-    accepted_name text NOT NULL,
-    tree_path ltree,
-    UNIQUE (accepted_name)
+    accepted_name text NOT NULL UNIQUE,
+    tree_path ltree
   );
 
 CREATE UNIQUE INDEX IF NOT EXISTS taxon_src_name_id_idx ON sapin.taxon (src_name_id);
@@ -55,7 +54,7 @@ CREATE TABLE IF NOT EXISTS
     src_id text NOT NULL,
     rank sapin.taxon_rank_enum NOT NULL,
     taxonomic_status sapin.taxonomic_status_enum NOT NULL,
-    name text NOT NULL,
+    name text NOT NULL UNIQUE,
     accepted_name_id integer REFERENCES sapin.taxon_scientific_name (id),
     original_name_id integer REFERENCES sapin.taxon_scientific_name (id),
     canonical_name text,
@@ -63,8 +62,7 @@ CREATE TABLE IF NOT EXISTS
     generic_name text,
     specific_epithet text,
     infraspecific_epithet text,
-    name_published_in text,
-    UNIQUE (name)
+    name_published_in text
   );
 
 CREATE INDEX IF NOT EXISTS taxon_scientific_name_taxon_id_idx ON sapin.taxon_scientific_name (taxon_id);
@@ -88,6 +86,7 @@ CREATE TABLE IF NOT EXISTS
   );
 
 CREATE INDEX IF NOT EXISTS taxon_vernacular_name_trgm_idx ON sapin.taxon_vernacular_name USING GIST (name gist_trgm_ops);
+
 CREATE INDEX IF NOT EXISTS taxon_vernacular_name_rank_idx ON sapin.taxon_vernacular_name (rank);
 
 -- location data
@@ -100,8 +99,8 @@ CREATE TABLE IF NOT EXISTS
       AND level < 4
     ),
     name text NOT NULL,
-    level_local_name text,
-    level_local_name_en text,
+    level_name text,
+    level_name_en text,
     iso_id text,
     geom geometry NOT NULL,
     tree_path ltree
@@ -121,3 +120,40 @@ CREATE TABLE IF NOT EXISTS
     taxon_id integer REFERENCES sapin.taxon (id),
     PRIMARY KEY (loc_id, taxon_id)
   );
+
+-- nature area data
+CREATE TYPE sapin.natural_area_domain_enum AS ENUM('TERRESTRIAL', 'MARINE');
+
+CREATE TABLE IF NOT EXISTS
+  sapin.natural_area_type (
+    id serial PRIMARY KEY,
+    name text NOT NULL UNIQUE,
+    code text NOT NULL UNIQUE,
+    description text
+  );
+
+CREATE TABLE IF NOT EXISTS
+  sapin.natural_area_type_location_asso (
+    type_id integer REFERENCES sapin.natural_area_type (id),
+    loc_id integer REFERENCES sapin.location (id),
+    PRIMARY KEY (loc_id, type_id)
+  );
+
+CREATE TABLE IF NOT EXISTS
+  sapin.natural_area (
+    id serial PRIMARY KEY,
+    name text NOT NULL,
+    domain sapin.natural_area_domain_enum NOT NULL,
+    src_id text NOT NULL,
+    type_id integer REFERENCES sapin.natural_area_type (id) NOT NULL,
+    description text,
+    geom geometry NOT NULL
+  );
+
+CREATE INDEX IF NOT EXISTS natural_area_trgm_idx ON sapin.natural_area USING GIST (name gist_trgm_ops);
+
+CREATE INDEX IF NOT EXISTS natural_area_domain_idx ON sapin.natural_area (domain);
+
+CREATE INDEX IF NOT EXISTS natural_area_type_id_idx ON sapin.natural_area (type_id);
+
+CREATE INDEX IF NOT EXISTS natural_area_geom_idx ON sapin.natural_area USING GIST (geom);

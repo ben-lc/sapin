@@ -1,6 +1,7 @@
 package com.github.ben_lc.sapin.repository
 
 import com.github.ben_lc.sapin.model.TaxonEntity
+import com.github.ben_lc.sapin.repository.config.R2dbcConfig
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions
@@ -14,7 +15,7 @@ import org.springframework.test.context.jdbc.Sql
 @DataR2dbcTest
 @ContextConfiguration(initializers = [DatabaseContextInitializer::class])
 @Import(R2dbcConfig::class, TaxonRepository::class)
-@Sql("taxon-data.sql")
+@Sql("load-taxon-data.sql")
 @Sql("clean-taxon-data.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 class TaxonRepositoryTests {
 

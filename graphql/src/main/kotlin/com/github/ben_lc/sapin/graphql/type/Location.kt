@@ -7,8 +7,8 @@ data class Location(
     val name: String,
     val level: Short,
     val isoId: String? = null,
-    val levelLocalName: String? = null,
-    val levelLocalNameEn: String? = null,
+    val levelName: String? = null,
+    val levelNameEn: String? = null,
     val parentId: String? = null
 ) {
   constructor(
@@ -18,7 +18,7 @@ data class Location(
       location.name,
       location.level,
       location.isoId,
-      location.levelLocalName,
-      location.levelLocalNameEn,
+      location.levelName,
+      location.levelNameEn,
       location.parentId?.toString())
 }

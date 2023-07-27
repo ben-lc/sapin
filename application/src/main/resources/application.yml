@@ -1,18 +1,18 @@
+---
 spring:
   application:
-    name: sapin
+    name: "sapin"
   profiles:
-    active: dev
+    active: "dev"
   graphql:
     graphiql:
       enabled: true
-
 ---
 spring:
   config:
     activate:
-      on-profile: dev
+      on-profile: "dev"
   r2dbc:
-    url: r2dbc:postgresql://localhost:5432/db_sapin
-    username: postgres
-    password: postgres
+    url: "r2dbc:postgresql://localhost:5432/db_sapin"
+    username: "postgres"
+    password: "postgres"

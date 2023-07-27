@@ -1,0 +1,31 @@
+---
+spring:
+  r2dbc:
+    url: "r2dbc:postgresql://localhost:5432/db_sapin"
+    username: "postgres"
+    password: "postgres"
+etl:
+  scriptella:
+    config:
+      location: "etl"
+  load:
+    geopackage:
+      location:
+      - tableName: "TABLE_0"
+        level: 1
+        isoIdColumnName: "ID_COL"
+        nameColumnName: "NAME_COL"
+        srcIdColumnName: "CODE_COL"
+      - tableName: "TABLE_1"
+        level: 2
+        isoIdColumnName: "ID_COL2"
+        nameColumnName: "NAME_COL2"
+        srcIdColumnName: "CODE_COL2"
+        levelNameColumnName: "LEVEL2"
+        levelNameEnColumnName: "LEVEL_EN2"
+        srcParentIdColumnName: "CODE_COL"
+      naturalArea:
+      - tableName: "NaturaSite_polygon"
+        nameColumnName: "SITENAME"
+        srcIdColumnName: "SITECODE"
+        typeCode: "NATURA2000"

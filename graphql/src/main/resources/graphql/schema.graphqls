@@ -21,6 +21,26 @@ type Query {
     includeVernacularNameLang: String
     limit: Int = 10
   ): [TaxonName!]
+
+  naturalAreaById(id: ID!): NaturalArea
+  searchNaturalAreas(
+    name: String
+    locationId: ID!
+    typeIds: [ID!]
+    limit: Int = 10
+  ): [NaturalArea!]
+  naturalAreasByGeolocation(
+    longitude: Float!
+    latitude: Float!
+    typeIds: [ID]
+    limit: Int = 10
+  ): [NaturalArea!]
+  naturalAreaTypeById(id: ID!): NaturalAreaType
+  searchNaturalAreaTypes(
+    name: String
+    locationIds: [ID!]
+    limit: Int = 10
+  ): [NaturalAreaType]
 }
 
 type Location {
@@ -28,8 +48,8 @@ type Location {
   name: String!
   isoId: String
   level: Int!
-  levelLocalName: String
-  levelLocalNameEn: String
+  levelName: String
+  levelNameEn: String
   parent: Location
   parents: [Location!]
   children: [Location!]
@@ -84,4 +104,18 @@ type TaxonVernacularName implements TaxonName {
   name: String!
   taxon: Taxon!
   language: String!
+}
+
+type NaturalArea {
+  id: ID!
+  name: String!
+  description: String
+  type: NaturalAreaType!
+}
+
+type NaturalAreaType {
+  id: ID!
+  name: String!
+  code: String!
+  description: String
 }

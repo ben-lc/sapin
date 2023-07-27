@@ -24,6 +24,7 @@ dependencies {
   implementation(project(":repository"))
   implementation("org.geotools.jdbc:gt-jdbc-postgis:${property("geotoolsVersion")}")
   implementation("org.geotools:gt-geopkg:${property("geotoolsVersion")}")
+  implementation("org.geotools:gt-cql:${property("geotoolsVersion")}")
   implementation("info.picocli:picocli-spring-boot-starter:${property("picocliVersion")}")
   implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
   implementation("org.scriptella:scriptella-core:${property("scriptellaVersion")}")

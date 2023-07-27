@@ -1,0 +1,37 @@
+<!DOCTYPE etl SYSTEM "http://scriptella.org/dtd/etl.dtd">
+<etl>
+  <description>Import vernacular names</description>
+
+  <connection
+    id="csv"
+    driver="csv"
+    url="${csv.location}/naturalAreaTypeLocation.tsv"
+  >
+    separator=\t
+    encoding=UTF-8
+    quote=
+    null_string=
+  </connection>
+  <connection
+    id="db"
+    url="${db.url}"
+    driver="postgresql"
+    user="${db.user}"
+    password="${db.password}"
+  >
+    statement.batchSize=100
+  </connection>
+
+  <query connection-id="csv">
+    <script connection-id="db">
+      INSERT INTO sapin.natural_area_type_location_asso (
+        type_id,
+        loc_id
+      )
+      VALUES (
+        (SELECT id FROM sapin.natural_area_type WHERE code = ?areaTypeCode),
+        (SELECT id FROM sapin.location WHERE iso_id = ?locationId)
+      )
+    </script>
+  </query>
+</etl>

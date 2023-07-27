@@ -3,49 +3,85 @@ package com.github.ben_lc.sapin.etl.repository
 import com.github.ben_lc.sapin.etl.model.LocationEtl
 import com.github.ben_lc.sapin.repository.util.bindNullable
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.reactor.awaitSingleOrNull
-import org.springframework.data.r2dbc.core.R2dbcEntityTemplate
-import org.springframework.data.relational.core.query.Criteria
-import org.springframework.data.relational.core.query.Query.query
+import org.springframework.r2dbc.core.DatabaseClient
 import org.springframework.r2dbc.core.await
+import org.springframework.r2dbc.core.awaitOneOrNull
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
 
 /** Spring data R2DBC repository for Location in the context of the ETL loading tool. */
 @Repository
-class LocationEtlRepository(private val template: R2dbcEntityTemplate) {
+class LocationEtlRepository(private val databaseClient: DatabaseClient) {
   @Transactional
   suspend fun saveAll(locations: Flow<LocationEtl>) =
       locations.collect {
-        template.databaseClient
+        databaseClient
             .sql(
-                """INSERT INTO sapin.location (level, name, geom, level_local_name, level_local_name_en, iso_id, src_id, src_parent_id)
-                   VALUES ($1, $2, ST_GeomFromText($3, $4), $5, $6, $7, $8, $9)""")
-            .bind(0, it.level)
-            .bind(1, it.name)
-            .bind(2, it.geom!!)
-            .bind(3, it.srid!!)
-            .bindNullable<String>(4, it.levelLocalName)
-            .bindNullable<String>(5, it.levelLocalNameEn)
-            .bindNullable<String>(6, it.isoId)
-            .bindNullable<String>(7, it.srcId)
-            .bindNullable<String>(8, it.srcParentId)
+                """
+                INSERT INTO sapin.location (
+                   level,
+                   name,
+                   geom,
+                   level_name,
+                   level_name_en,
+                   iso_id,
+                   src_id,
+                   src_parent_id
+                 )
+                 VALUES (
+                   :level,
+                   :name,
+                   ST_Transform(ST_GeomFromText(:geom, :srid), 4326),
+                   :levelName,
+                   :levelNameEn,
+                   :isoId,
+                   :srcId,
+                   :srcParentId
+                   )""")
+            .bind("level", it.level)
+            .bind("name", it.name)
+            .bind("geom", it.geom)
+            .bind("srid", it.srid)
+            .bindNullable<String>("levelName", it.levelName)
+            .bindNullable<String>("levelNameEn", it.levelNameEn)
+            .bindNullable<String>("isoId", it.isoId)
+            .bindNullable<String>("srcId", it.srcId)
+            .bindNullable<String>("srcParentId", it.srcParentId)
             .await()
       }
 
   /** Get Location by its name, geom property is never fetched. */
-  suspend fun findByName(name: String): LocationEtl? =
-      template
-          .selectOne(
-              query(Criteria.where("name").`is`(name))
-                  .columns(
-                      "id",
-                      "parent_id",
-                      "level",
-                      "level_local_name",
-                      "level_local_name_en",
-                      "name",
-                      "iso_id"),
-              LocationEtl::class.java)
-          .awaitSingleOrNull()
+  suspend fun findById(id: Int): LocationEtl? =
+      databaseClient
+          .sql(
+              """
+              SELECT
+                id,
+                parent_id,
+                level,
+                level_name,
+                level_name_en,
+                name,
+                iso_id,
+                ST_asText(geom) AS geom,
+                ST_SRID(geom) AS srid
+              FROM
+                sapin.location
+              WHERE
+                id = :id
+                """)
+          .bind("id", id)
+          .map { row ->
+            LocationEtl(
+                id = row.get("id") as Int,
+                parentId = row.get("parent_id") as Int?,
+                name = row.get("name") as String,
+                level = row.get("level") as Short,
+                levelName = row.get("level_name") as String?,
+                levelNameEn = row.get("level_name_en") as String?,
+                isoId = row.get("iso_id") as String?,
+                geom = row.get("geom") as String,
+                srid = row.get("srid") as Int)
+          }
+          .awaitOneOrNull()
 }

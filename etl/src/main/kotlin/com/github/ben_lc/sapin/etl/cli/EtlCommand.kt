@@ -1,16 +1,16 @@
 package com.github.ben_lc.sapin.etl.cli
 
+import com.github.ben_lc.sapin.etl.EtlProperties
 import com.github.ben_lc.sapin.etl.service.GeopackageService
-import com.github.ben_lc.sapin.etl.service.GeopackageService.GpkgProps
 import com.github.ben_lc.sapin.etl.service.ScriptellaService
 import java.io.File
 import java.util.concurrent.Callable
 import kotlinx.coroutines.runBlocking
-import org.springframework.beans.factory.annotation.Value
-import org.springframework.core.io.Resource
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import picocli.CommandLine.*
 
+val logger = LoggerFactory.getLogger(EtlCommand::class.java)
 /** Picocli commands configuration. */
 @Component
 @Command(
@@ -19,42 +19,31 @@ import picocli.CommandLine.*
     mixinStandardHelpOptions = true)
 class EtlCommand(
     val geopackageService: GeopackageService,
-    val scriptellaService: ScriptellaService
+    val scriptellaService: ScriptellaService,
+    val etlProps: EtlProperties
 ) : Callable<Int> {
 
   @Spec val spec: Model.CommandSpec? = null
-
-  @Value("\${scriptella.config.location}") lateinit var configLocation: Resource
 
   @Command(
       name = "load-location",
       description = ["Load location data into sapin database"],
       mixinStandardHelpOptions = true)
   fun loadLocation(
-      @Parameters(paramLabel = "<gpkg file>", description = ["Geopackage file location to load"])
+      @Parameters(
+          paramLabel = "<gpkg file>",
+          description = ["Geopackage file containing locations to load"])
       gpkg: File
   ) {
-    scriptellaService.runEtl(File(configLocation.file, "/location"), "pre-load.etl.xml")
-    runBlocking {
-      geopackageService.loadLocation(
-          gpkg,
-          GpkgProps(
-              tableName = "ADM_0",
-              level = 1,
-              isoIdColumn = "GID_0",
-              nameColumn = "COUNTRY",
-              srcId = "GID_0"),
-          GpkgProps(
-              tableName = "ADM_1",
-              level = 2,
-              isoIdColumn = "ISO_1",
-              nameColumn = "NAME_1",
-              levelLocalName = "TYPE_1",
-              levelLocalNameEn = "ENGTYPE_1",
-              srcId = "GID_1",
-              srcParentId = "GID_0"))
+    if (etlProps.load.geopackage.location == null) {
+      logger.error(
+          "Missing configuration 'etl.log.geopackage.location in provided application.yml'")
     }
-    scriptellaService.runEtl(File(configLocation.file, "/location"), "post-load.etl.xml")
+    scriptellaService.runEtl(
+        File(etlProps.scriptella.config.location.file, "/location"), "pre-load.etl.xml")
+    runBlocking { geopackageService.loadLocation(gpkg, etlProps.load.geopackage.location!!) }
+    scriptellaService.runEtl(
+        File(etlProps.scriptella.config.location.file, "/location"), "post-load.etl.xml")
   }
   @Command(
       name = "load-taxon",
@@ -69,7 +58,48 @@ class EtlCommand(
           defaultValue = "*.etl.xml")
       configFilePattern: String
   ) {
-    scriptellaService.runEtl(File(configLocation.file, "/taxon"), configFilePattern, dataFolder)
+    scriptellaService.runEtl(
+        File(etlProps.scriptella.config.location.file, "/taxon"), configFilePattern, dataFolder)
+  }
+
+  @Command(
+      name = "load-natural-area",
+      description = ["Load natural area data into sapin database"],
+      mixinStandardHelpOptions = true)
+  fun loadNaturalArea(
+      @Parameters(
+          paramLabel = "<gpkg file>",
+          description = ["Geopackage file containing nature areas to load"])
+      gpkg: File
+  ) {
+    if (etlProps.load.geopackage.naturalArea == null) {
+      logger.error(
+          "Missing configuration 'etl.log.geopackage.natureArea in provided application.yml'")
+    }
+    scriptellaService.runEtl(
+        File(etlProps.scriptella.config.location.file, "/naturalArea"), "pre-load.etl.xml")
+    runBlocking { geopackageService.loadNatureArea(gpkg, etlProps.load.geopackage.naturalArea!!) }
+    scriptellaService.runEtl(
+        File(etlProps.scriptella.config.location.file, "/naturalArea"), "post-load.etl.xml")
+  }
+
+  @Command(
+      name = "load-natural-area-type",
+      description = ["Load natural area type data into sapin database"],
+      mixinStandardHelpOptions = true)
+  fun loadNaturalAreaType(
+      @Parameters(paramLabel = "<data folder>", description = ["Folder containing data to load"])
+      dataFolder: File,
+      @Parameters(
+          description = ["Ant file pattern to select scriptella etl files to run e.g: 1-1*"],
+          paramLabel = "<file pattern>",
+          defaultValue = "*.etl.xml")
+      configFilePattern: String
+  ) {
+    scriptellaService.runEtl(
+        File(etlProps.scriptella.config.location.file, "/naturalAreaType"),
+        configFilePattern,
+        dataFolder)
   }
 
   override fun call(): Int = throw ParameterException(spec?.commandLine(), "Specify a subcommand")

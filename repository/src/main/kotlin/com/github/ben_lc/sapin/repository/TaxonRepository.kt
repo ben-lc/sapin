@@ -96,8 +96,8 @@ class TaxonRepository(private val databaseClient: DatabaseClient) {
           .bind("name", name)
           .bind("language", language)
           .bind("size", size)
-          .bindIfNotNull<String>("rank", rank)
-          .bindIfNotNull<String>("gteRank", gteRank)
+          .bindIfNotNull("rank", rank)
+          .bindIfNotNull("gteRank", gteRank)
           .map(VERNACULAR_NAME_MAPPER)
           .flow()
 

@@ -1,7 +1,7 @@
 package com.github.ben_lc.sapin.etl.repository
 
 import com.github.ben_lc.sapin.etl.model.LocationEtl
-import com.github.ben_lc.sapin.repository.R2dbcConfig
+import com.github.ben_lc.sapin.repository.config.R2dbcConfig
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
@@ -29,7 +29,7 @@ class LocationEtlRepositoryTests {
             level = 1,
             isoId = "ARG",
             srcId = "ARG",
-            geom = "POLYGON ((10 30, 30 30, 30 10, 10 10, 10 30))",
+            geom = "POLYGON((10 30,30 30,30 10,10 10,10 30))",
             srid = 4326)
     val location2 =
         LocationEtl(
@@ -37,19 +37,30 @@ class LocationEtlRepositoryTests {
             level = 1,
             isoId = "BRA",
             srcId = "BRA",
-            geom = "POLYGON ((10 30, 30 30, 30 10, 10 10, 10 30))",
-            srid = 4326)
+            geom = "POLYGON((10 30,30 30,30 10,10 10,10 30))",
+            srid = 2154)
     locationRepo.saveAll(listOf(location1, location2).asFlow())
 
-    assertThat(locationRepo.findByName("Argentina"))
-        .usingRecursiveComparison()
-        .ignoringFields("id")
-        .isEqualTo(LocationEtl(name = "Argentina", level = 1, isoId = "ARG"))
+    assertThat(locationRepo.findById(5))
+        .isEqualTo(
+            LocationEtl(
+                id = 5,
+                name = "Argentina",
+                level = 1,
+                isoId = "ARG",
+                geom = "POLYGON((10 30,30 30,30 10,10 10,10 30))",
+                srid = 4326))
 
-    assertThat(locationRepo.findByName("Brazil"))
-        .usingRecursiveComparison()
-        .ignoringFields("id")
-        .isEqualTo(LocationEtl(name = "Brazil", level = 1, isoId = "BRA"))
+    assertThat(locationRepo.findById(6))
+        .isEqualTo(
+            LocationEtl(
+                id = 6,
+                name = "Brazil",
+                level = 1,
+                isoId = "BRA",
+                geom =
+                    "POLYGON((-1.363029328652153 -5.983666035110697,-1.36290492245362 -5.98365914607577,-1.362898041657712 -5.983783699172008,-1.363022447660842 -5.983790588183625,-1.363029328652153 -5.983666035110697))",
+                srid = 4326))
   }
 
   @Test
@@ -59,8 +70,8 @@ class LocationEtlRepositoryTests {
             name = "Bretagne",
             level = 2,
             isoId = "FR-BRE",
-            levelLocalNameEn = "Region",
-            levelLocalName = "Région",
+            levelNameEn = "Region",
+            levelName = "Région",
             srcId = "FR.2",
             geom = "POLYGON ((10 30, 30 30, 30 10, 10 10, 10 30))",
             srid = 4326)
@@ -69,48 +80,34 @@ class LocationEtlRepositoryTests {
             name = "Bourgogne-Franche-Comté",
             level = 2,
             isoId = "FR-BFC",
-            levelLocalNameEn = "Region",
-            levelLocalName = "Région",
+            levelNameEn = "Region",
+            levelName = "Région",
             srcId = "FR.3",
             geom = "POLYGON ((10 30, 30 30, 30 10, 10 10, 10 30))",
             srid = 4326)
     locationRepo.saveAll(listOf(location1, location2).asFlow())
-    assertThat(locationRepo.findByName("Bretagne"))
-        .usingRecursiveComparison()
-        .ignoringFields("id")
+    assertThat(locationRepo.findById(5))
         .isEqualTo(
             LocationEtl(
+                id = 5,
                 name = "Bretagne",
                 level = 2,
                 isoId = "FR-BRE",
-                levelLocalNameEn = "Region",
-                levelLocalName = "Région"))
+                levelNameEn = "Region",
+                levelName = "Région",
+                geom = "POLYGON((10 30,30 30,30 10,10 10,10 30))",
+                srid = 4326))
 
-    assertThat(locationRepo.findByName("Bourgogne-Franche-Comté"))
-        .usingRecursiveComparison()
-        .ignoringFields("id")
+    assertThat(locationRepo.findById(6))
         .isEqualTo(
             LocationEtl(
+                id = 6,
                 name = "Bourgogne-Franche-Comté",
                 level = 2,
                 isoId = "FR-BFC",
-                levelLocalNameEn = "Region",
-                levelLocalName = "Région"))
-  }
-
-  @Test
-  fun `findByName should returns location by its name without fetching geom`(): Unit = runBlocking {
-    assertThat(locationRepo.findByName("Italy"))
-        .isEqualTo(LocationEtl(id = 1, name = "Italy", level = 1, isoId = "ITA", geom = null))
-
-    assertThat(locationRepo.findByName("Nouvelle-Aquitaine"))
-        .isEqualTo(
-            LocationEtl(
-                id = 4,
-                name = "Nouvelle-Aquitaine",
-                level = 2,
-                levelLocalName = "Région",
-                levelLocalNameEn = "Region",
-                isoId = "FR-NAQ"))
+                levelNameEn = "Region",
+                levelName = "Région",
+                geom = "POLYGON((10 30,30 30,30 10,10 10,10 30))",
+                srid = 4326))
   }
 }
