@@ -2,11 +2,7 @@
 <etl>
   <description>Import vernacular names</description>
 
-  <connection
-    id="csv"
-    driver="csv"
-    url="${csv.location}/naturalAreaType/naturalAreaType.tsv"
-  >
+  <connection id="csv" driver="csv" url="${csv.location}/naturalAreaType.tsv">
     separator=\t
     encoding=UTF-8
     quote=
