@@ -11,3 +11,6 @@ inline fun <reified T> GenericExecuteSpec.bindNullable(name: String, value: Any?
 
 fun GenericExecuteSpec.bindIfNotNull(name: String, value: Any?) =
     if (value == null) this else this.bind(name, value)
+
+fun GenericExecuteSpec.bindIfNotNullOrEmpty(name: String, value: Collection<Any>?) =
+    if (value.isNullOrEmpty()) this else this.bind(name, value)

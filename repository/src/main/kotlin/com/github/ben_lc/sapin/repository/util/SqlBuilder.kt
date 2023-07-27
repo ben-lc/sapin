@@ -11,9 +11,9 @@ interface Condition {
 
 @WhereConditionMarker
 abstract class ConditionNode(val operator: String? = "AND") : Condition {
-  protected val children = mutableListOf<Condition>()
+  private val children = mutableListOf<Condition>()
 
-  protected fun <T : Condition> initCondition(condition: T, init: T.() -> Unit): T {
+  private fun <T : Condition> initCondition(condition: T, init: T.() -> Unit): T {
     condition.init()
     children.add(condition)
     return condition
@@ -42,7 +42,7 @@ abstract class ConditionNode(val operator: String? = "AND") : Condition {
     return builder.toString()
   }
   operator fun String?.unaryPlus() {
-    if (this != null) {
+    if (!this.isNullOrEmpty()) {
       children.add(Bool(this))
     }
   }
@@ -58,7 +58,7 @@ class OrCondition : ConditionNode("OR") {
   }
 }
 
-class Bool(val content: String) : Condition {
+class Bool(private val content: String) : Condition {
   override fun render(builder: StringBuilder, indent: String) {
     builder.append("\n$indent$content")
   }
@@ -73,3 +73,5 @@ class Where : ConditionNode() {
 }
 
 fun where(init: Where.() -> Unit): Where = Where().apply(init)
+
+infix fun String.unless(predicate: () -> Boolean) = if (predicate()) "" else this
