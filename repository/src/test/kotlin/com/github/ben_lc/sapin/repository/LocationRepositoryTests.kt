@@ -15,7 +15,7 @@ import org.springframework.test.context.jdbc.Sql
 @DataR2dbcTest
 @ContextConfiguration(initializers = [DatabaseContextInitializer::class])
 @Import(R2dbcConfig::class, LocationRepository::class)
-@Sql("location-data.sql")
+@Sql("load-location-data.sql")
 @Sql("clean-location-data.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 class LocationRepositoryTests {
 

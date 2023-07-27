@@ -16,7 +16,7 @@ import org.springframework.test.context.jdbc.Sql
 @DataR2dbcTest
 @ContextConfiguration(initializers = [DatabaseContextInitializer::class])
 @Import(R2dbcConfig::class, TaxonScientificNameRepository::class)
-@Sql("taxon-scientificname-data.sql")
+@Sql("load-taxon-scientificname-data.sql")
 @Sql("clean-taxon-scientificname-data.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 class TaxonScientificNameRepositoryTests {
   @Autowired lateinit var taxonNameRepo: TaxonScientificNameRepository
